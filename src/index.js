@@ -2,7 +2,7 @@ import * as THREE from "three";
 import * as d3 from "d3";
 import * as TWEEN from "tween.js";
 import * as zalando from "./zalando";
-import * as $ from "jquery";
+import $ from "jquery";
 
 THREE.TrackballControls = function (object, domElement) {
 
@@ -293,10 +293,7 @@ THREE.TrackballControls = function (object, domElement) {
     };
 
     this.update = function () {
-
         _eye.subVectors(_this.object.position, _this.target);
-
-        _eye.multiplyScalar(0.5);
 
         if (!_this.noRotate) {
 
@@ -855,23 +852,16 @@ THREE.CSS3DRenderer = function () {
     camera.setLens(30);
 
     VIZ.drawElements = function (data) {
-
         VIZ.count = data.length;
 
         var margin = { top: 17, right: 0, bottom: 16, left: 20 },
             width = 225 - margin.left - margin.right,
             height = 140 - margin.top - margin.bottom;
 
-        var x = d3.scale.ordinal()
-            .rangeRoundBands([0, width], 0, 0)
-            .domain(d3.range(2004, 2014).map(function (d) { return d + ""; }))
-
-        var y = d3.scale.linear().range([height, 0]).domain([0, 135]);
-
-        var elements = d3.selectAll('.element')
-            .data(data).enter()
+        var selection = d3.selectAll(".one").data(data);
+        var elements = selection.enter()
             .append('div')
-            .attr('class', 'element');
+            .attr('class', "one");
 
         elements.append('div')
             .attr('class', 'chartTitle')
@@ -884,17 +874,20 @@ THREE.CSS3DRenderer = function () {
         elements.append('div')
             .attr('class', 'investLabel')
             .html("Goto next link"); // item url
-
-        elements.each(setData);
-        elements.each(objectify);
-
+        selection.each(setData);
+        selection.each(objectify);
     };
-
 
     function objectify(d) {
         var object = new THREE.CSS3DObject(this);
         object.position = d.random.position;
         scene.add(object);
+    }
+
+    VIZ.removeAll = function () {
+        while (scene.children.length > 0) {
+            scene.remove(scene.children[0]);
+        }
     }
 
     function setData(d, i) {
@@ -1008,24 +1001,32 @@ recognition.onresult = function (event) {
     if (tt.indexOf("clothing" !== -1)) {
         tt = "clothing";
     }
-    zalando.queryCategory(tt, undefined, (data) => {
+    if (tt.indexOf("shows" !== -1)) {
+        tt = "shoes";
+    }
+    zalando.queryCategory(tt, "blue", (data) => {
         console.log(data);
+        VIZ.drawElements(data.content);
+        VIZ.transform('sphere');
+        d3.select("#loading").remove();
+        VIZ.render();
+        VIZ.animate();
+        window.addEventListener('resize', VIZ.onWindowResize, false);
         recognition.onresult = function (event) {
             let color = event.results[0][0].transcript;
             console.log('You said: ', color);
-            zalando.queryCategory(tt, color, (data) => {
-                console.log(data);
+            zalando.queryCategory(tt, "green", (dd) => {
+                console.log(dd);
+                VIZ.removeAll();
+                VIZ.render();
+                VIZ.animate();
+                VIZ.drawElements(dd.content);
+                VIZ.transform('sphere');
+                VIZ.render();
+                VIZ.animate();
+                window.addEventListener('resize', VIZ.onWindowResize, false);
             });
         }
         recognition.start();
     });
 };
-
-d3.json("data/investments.json", function (error, data) {
-    VIZ.drawElements(data);
-    VIZ.transform('sphere');
-    d3.select("#loading").remove();
-    VIZ.render();
-    VIZ.animate();
-    window.addEventListener('resize', VIZ.onWindowResize, false);
-});
