@@ -859,17 +859,6 @@ THREE.CSS3DRenderer = function () {
         VIZ.count1 = data1.length;
         VIZ.count2 = data2.length;
 
-        var margin = { top: 17, right: 0, bottom: 16, left: 20 },
-            width = 225 - margin.left - margin.right,
-            height = 140 - margin.top - margin.bottom;
-
-        var x = d3.scale.ordinal()
-            .rangeRoundBands([0, width], 0, 0)
-            .domain(d3.range(2004, 2014).map(function (d) { return d + ""; }))
-
-        var y = d3.scale.linear().range([height, 0]).domain([0, 135]);
-
-
 
         var elements1 = d3.selectAll('.element')
             .data(data1).enter()
@@ -889,8 +878,6 @@ THREE.CSS3DRenderer = function () {
             .html("Goto next link"); // item url
 
         elements1.each(setData1);
-        
-
 
 
         var elements2 = d3.selectAll('.element2')
@@ -914,7 +901,6 @@ THREE.CSS3DRenderer = function () {
 
         elements1.each(objectify);
         elements2.each(objectify);
-
     };
 
 
