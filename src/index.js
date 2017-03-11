@@ -874,7 +874,7 @@ THREE.CSS3DRenderer = function () {
             .attr('height', '100px')
             .attr('width', '100px')
             .attr('class', 'investLabel')
-            .attr("src", function (d, i) { return d.media.images[0].mediumUrl; }); // item url
+            .attr("src", function (d, i) { return d.media ? d.media.images[0].mediumUrl : null;}); // item url
 
         elements1.each(setData1);
 
