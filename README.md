@@ -1,6 +1,6 @@
-# vr-browser
+To start :
 
-To run it type:
-```
-python -m SimpleHTTPServer 8000
-```
+1. Clone the project
+2. Run ```npm install```
+3. Run ```npm start```
+4. Go to ```localhost:8080``` on your browser.
