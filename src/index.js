@@ -851,7 +851,7 @@ THREE.CSS3DRenderer = function () {
     camera.position.z = 3000;
     camera.setLens(30);
 
-    VIZ.drawElements = function (data1, data2) {
+    VIZ.drawElements = function (data1, data2, onClick) {
 
         VIZ.count1 = data1.length;
         VIZ.count2 = data2.length;
@@ -859,6 +859,7 @@ THREE.CSS3DRenderer = function () {
         var elements1 = d3.selectAll('.element')
             .data(data1).enter()
             .append('div')
+            .on('click', function (d) { onClick(d); })
             .attr('class', 'element');
 
         elements1.append('div')
@@ -879,6 +880,7 @@ THREE.CSS3DRenderer = function () {
         var elements2 = d3.selectAll('.element2')
             .data(data2).enter()
             .append('div')
+            .on('click', function (d) { onClick(d) })
             .attr('class', 'element2');
 
         elements2.append('div')
@@ -992,14 +994,8 @@ THREE.CSS3DRenderer = function () {
         renderer.render(scene, camera);
     };
 
-    d3.select("#menu").selectAll('button')
-        .data(['sphere', 'helix', 'grid']).enter()
-        .append('button')
-        .html(function (d) { return d; })
-        .on('click', function (d) { VIZ.transform(d); })
-
     VIZ.transform = function (layout) {
-        var duration = 1000;
+        var duration = 10000;
 
         TWEEN.removeAll();
 
@@ -1053,40 +1049,112 @@ var recognition = new (webkitSpeechRecognition || mozSpeechRecognition || msSpee
 recognition.lang = 'en-UK';
 recognition.interimResults = false;
 recognition.maxAlternatives = 5;
-recognition.start();
-recognition.onresult = function (event) {
-    let tt = event.results[0][0].transcript;
-    console.log('You said: ', tt);
-    if (tt.indexOf("clothing" !== -1)) {
-        tt = "clothing";
-    }
-    if (tt.indexOf("shows" !== -1)) {
-        tt = "shoes";
-    }
+// recognition.start();
+// recognition.onresult = function (event) {
+// let tt = event.results[0][0].transcript;
+let tt = "shoes";
+console.log('You said: ', tt);
+if (tt.indexOf("clothing" !== -1)) {
+    tt = "clothing";
+}
+if (tt.indexOf("shows" !== -1)) {
+    tt = "shoes";
+}
 
-    zalando.queryCategory(tt, "blue", (data) => {
-        console.log(data);
-        VIZ.drawElements(data.content, []);
-        VIZ.transform('sphere');
-        d3.select("#loading").remove();
+Array.prototype.flatMap = function(lambda) { 
+    return Array.prototype.concat.apply([], this.map(lambda)); 
+};
+
+zalando.queryCategory(tt, "blue", (data) => {
+    VIZ.drawElements(data.content, data.content.flatMap(function (d) {
+            return [{
+                name: d.name
+            }, {
+                name: "Color",
+                text: d.color
+            }, {
+                name: "Season",
+                text: d.season
+            }];
+        }), function (a) {
+        // zalando.queryArticle(a.id, function (d) {
+        //     let tiles = [{
+        //         name: d.name
+        //     }, {
+        //         name: "Color",
+        //         text: d.color
+        //     }, {
+        //         name: "Season",
+        //         text: d.season
+        //     }];
+
+            VIZ.removeAll();
+            VIZ.render();
+            VIZ.animate();
+            VIZ.drawElements(data.content.flatMap(function (d) {
+            return [{
+                name: d.name
+            }, {
+                name: "Color",
+                text: d.color
+            }, {
+                name: "Season",
+                text: d.season
+            }];
+        }, []), function (d) { });
+            VIZ.transform('sphere');
+            VIZ.render();
+            VIZ.animate();
+        // });
+    });
+    VIZ.transform('sphere');
+    d3.select("#loading").remove();
+    VIZ.render();
+    VIZ.animate();
+    window.addEventListener('resize', VIZ.onWindowResize, false);
+    // recognition.onresult = function (event) {
+    // let color = event.results[0][0].transcript;
+    zalando.queryCategory(tt, "green", (dd) => {
+        VIZ.removeAll();
         VIZ.render();
         VIZ.animate();
-        window.addEventListener('resize', VIZ.onWindowResize, false);
-        recognition.onresult = function (event) {
-            let color = event.results[0][0].transcript;
-            console.log('You said: ', color);
-            zalando.queryCategory(tt, "green", (dd) => {
-                console.log(dd);
+        VIZ.drawElements(dd.content, dd.content.flatMap(function (d) {
+            return [{
+                name: d.name
+            }, {
+                name: "Color",
+                text: d.color
+            }, {
+                name: "Season",
+                text: d.season
+            }];
+        }), function (a) {
+            // zalando.queryArticle(a.id, function (d) {
                 VIZ.removeAll();
                 VIZ.render();
                 VIZ.animate();
-                VIZ.drawElements(data.content, dd.content);
+                VIZ.drawElements(dd.content.flatMap(function (d) {
+            return [{
+                name: d.name
+            }, {
+                name: "Color",
+                text: d.color
+            }, {
+                name: "Season",
+                text: d.season
+            }];
+        }), [], function (d) { });
                 VIZ.transform('sphere');
                 VIZ.render();
                 VIZ.animate();
-                window.addEventListener('resize', VIZ.onWindowResize, false);
-            });
-        }
-        recognition.start();
+            // });
+        });
+        VIZ.transform('sphere');
+        VIZ.render();
+        VIZ.animate();
+        window.addEventListener('resize', VIZ.onWindowResize, false);
     });
-};
+    // }
+    // recognition.start();
+});
+// };

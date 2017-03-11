@@ -14,3 +14,18 @@ export function queryCategory(category, color, onSucess) {
         }
     })
 }
+
+export function queryArticle(id, onSucess) {
+  $.ajax({
+        url: `https://api.zalando.com/articles/${id}`,
+        crossDomain: true,
+        type: 'GET',
+        xhrFields: {
+            withCredentials: true
+        },
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        success: function (result) {
+            onSucess(result);
+        }
+    })
+}
