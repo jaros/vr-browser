@@ -180,20 +180,23 @@ h5 {
   height: 120px;
 }
 
-button {
-  color: #fff;
-  background: transparent;
+.item-button {
+  color: #000000;
+  /*background: transparent;*/
   outline: 1px solid rgba(48, 103, 145, .75);
   border: 0px;
+  height: 115px;
+  width: 225px;
+  font-size: 30px;
   padding: 5px 10px;
   cursor: pointer;
 }
 
-button:hover {
+.item-button:hover {
   background-color: rgba(48, 103, 145, .5);
 }
 
-button:active {
+.item-button:active {
   color: #000000;
   background-color: rgba(48, 103, 145, .75);
 }

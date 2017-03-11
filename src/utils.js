@@ -29,9 +29,10 @@ export function renderImage(images) {
 }
 
 export function renderButton(images) {
-    images.append('button')
+    images.append('input')
+        .attr('type', 'button')
         .attr('class', 'item-button')
-        .attr("value", "Buy");
+        .attr('value', 'Buy');
 }
 
 export function renderAttributes(images) {
