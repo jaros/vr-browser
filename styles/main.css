@@ -152,6 +152,10 @@ h5 {
   opacity: 0.2;
 }
 
+.element2.element3 {
+  opacity: 1;
+}
+
 .element2:hover {
   box-shadow: 0px 0px 12px rgba(0, 255, 255, 0.75);
   border: 1px solid rgba(127, 255, 255, 0.75);
@@ -167,6 +171,11 @@ h5 {
 }
 
 .element2 img.item-body {
+  width: 200px;
+  height: 120px;
+}
+
+.element2 img.item-image {
   width: 200px;
   height: 120px;
 }

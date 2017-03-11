@@ -680,7 +680,7 @@ THREE.TrackballControls = function (object, domElement) {
             var prevPov = new THREE.Vector3();
             var pan = new THREE.Vector3();
             prevPov.copy(_this.object.position)
-            _this.object.translateZ( -30);
+            _this.object.translateZ( -500);
             pan.subVectors(_this.object.position,prevPov)
             _this.target.add(pan);
             _this.update();
@@ -688,7 +688,7 @@ THREE.TrackballControls = function (object, domElement) {
             var prevPov = new THREE.Vector3();
             var pan = new THREE.Vector3();
             prevPov.copy(_this.object.position)
-            _this.object.translateZ( 30);
+            _this.object.translateZ( 500);
             pan.subVectors(_this.object.position,prevPov)
             _this.target.add(pan);
             _this.update();
@@ -1237,6 +1237,10 @@ Array.prototype.flatMap = function (lambda) {
             .on('click', function (d) { onClick(d) })
             .attr('class', 'element2');
 
+        if (data1.length === 0) {
+            elements2.attr('class', 'element3');
+        }
+
         items = elements2.filter(function (d) { return d.type === "item" });
         utils.renderItem(items);
 
@@ -1253,7 +1257,7 @@ Array.prototype.flatMap = function (lambda) {
         utils.renderAttributes(attributes);
 
 
-        elements2.each(function (d, i) { setData(d, i, VIZ.count2, 1200) });
+        elements2.each(function (d, i) { setData(d, i, VIZ.count2, 2000, true) });
 
         elements1.each(objectify);
         elements2.each(objectify);
@@ -1271,8 +1275,13 @@ Array.prototype.flatMap = function (lambda) {
         }
     }
 
-    function setData(d, i, count, radius) {
+    function setData(d, i, count, radius, isBehind = false) {
         var vector, phi, theta;
+
+        let newI = i;
+        if (isBehind) {
+            newI = i / 4;
+        }
 
         var random = new THREE.Object3D();
         random.position.x = Math.random() * 4000 - 2000;
@@ -1283,44 +1292,58 @@ Array.prototype.flatMap = function (lambda) {
 
         var sphere = new THREE.Object3D();
 
-        if (i < 12) {
+        if (newI < 12) {
             sphere.position.y = 0;
-            const alfa = Math.PI / 12 * i;
+            let alfa = Math.PI / 12 * newI;
+            if (isBehind) {
+                alfa += ((i % 2 === 1) ? 1 : -1) * Math.PI / 90;
+            }
+            if (isBehind) {
+                sphere.position.y = Math.sin(((i % 2 === 1) ? 1 : -1) * Math.PI / 90) * radius;
+            }
+
             sphere.position.x = Math.cos(alfa) * radius;
             sphere.position.z = -Math.sin(alfa) * radius;
         }
-        if (i >= 12 && i < 18) {
+        if (newI >= 12 && newI < 18) {
             const radiusPrim = radius * Math.sin(Math.PI / 3);
-            sphere.position.y = Math.cos(Math.PI / 3) * radius;
+            sphere.position.y = Math.cos(Math.PI / 3 + ((i % 2 === 1) ? 1 : -1) * Math.PI / 90) * radius;
 
-            const alfa = Math.PI / 6 * (i - 12);
+            let alfa = Math.PI / 6 * (newI - 12);
+            if (isBehind) {
+                alfa += ((i % 2 === 1) ? 1 : -1) * Math.PI / 90;
+            }
             sphere.position.x = Math.cos(alfa) * radiusPrim;
             sphere.position.z = -Math.sin(alfa) * radiusPrim;
         }
-        if (i >= 18 && i < 24) {
+        if (newI >= 18 && newI < 24) {
             const radiusPrim = radius * Math.sin(Math.PI / 3);
             sphere.position.y = -Math.cos(Math.PI / 3) * radius;
 
-            const alfa = Math.PI / 6 * (i - 18);
+            const alfa = Math.PI / 6 * (newI - 18);
             sphere.position.x = Math.cos(alfa) * radiusPrim;
             sphere.position.z = -Math.sin(alfa) * radiusPrim;
         }
-        if (i >= 24 && i < 27) {
+        if (newI >= 24 && newI < 27) {
             const radiusPrim = radius * Math.sin(Math.PI / 6);
             sphere.position.y = Math.cos(Math.PI / 6) * radius;
 
-            const alfa = Math.PI / 3 * (i - 24);
+            const alfa = Math.PI / 3 * (newI - 24);
             sphere.position.x = Math.cos(alfa) * radiusPrim;
             sphere.position.z = -Math.sin(alfa) * radiusPrim;
         }
-        if (i >= 27 && i < 30) {
+        if (newI >= 27 && newI < 30) {
             const radiusPrim = radius * Math.sin(Math.PI / 6);
             sphere.position.y = -Math.cos(Math.PI / 6) * radius;
 
-            const alfa = Math.PI / 3 * (i - 27);
+            const alfa = Math.PI / 3 * (newI - 27);
             sphere.position.x = Math.cos(alfa) * radiusPrim;
             sphere.position.z = -Math.sin(alfa) * radiusPrim;
         }
+
+        // if (isBehind) {
+        //     sphere.position.z += 20;
+        // }
 
 
 
@@ -1446,12 +1469,15 @@ zalando.queryCategory(tt, "blue", (data) => {
         VIZ.removeAll();
         VIZ.render();
         VIZ.animate();
-        VIZ.drawElements(dd, [], function (a) {
+        let secondSphere = dd.flatMap(zalando.transformArticle);
+        VIZ.drawElements(dd, secondSphere, function (element) {
             // zalando.queryArticle(a.id, function (d) {
+
+            // VIZ.camera.multiplyScalar(0.5);
             VIZ.removeAll();
             VIZ.render();
             VIZ.animate();
-            VIZ.drawElements(dd.flatMap(zalando.transformArticle), [], function (d) { });
+            VIZ.drawElements([], secondSphere, function (d) { });
             VIZ.transform('sphere');
             VIZ.render();
             VIZ.animate();
