@@ -113,6 +113,7 @@ h5 {
   display: flex;
   align-items: center;
   flex-direction: column;
+  transition: all .3s ease-out;
 }
 
 .element:hover {
@@ -123,7 +124,7 @@ h5 {
 .element .item-title {
   font-size: 20px;
   color: rgba(255, 255, 255, 0.75);
-  overflow-y: hidden;
+  overflow-x: hidden;
   white-space: nowrap;
   width: 100%;
   text-overflow: ellipsis;
@@ -148,7 +149,7 @@ h5 {
   display: flex;
   align-items: center;
   flex-direction: column;
-  opacity: 0.3;
+  opacity: 0.2;
 }
 
 .element2:hover {
@@ -159,7 +160,7 @@ h5 {
 .element2 .item-title {
   font-size: 20px;
   color: rgba(255, 255, 255, 0.75);
-  overflow-y: hidden;
+  overflow-x: hidden;
   white-space: nowrap;
   width: 100%;
   text-overflow: ellipsis;
