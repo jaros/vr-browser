@@ -2,7 +2,7 @@ import * as $ from "jquery";
 
 export function queryCategory(category, color, onSuccess) {
   $.ajax({
-        url: `https://api.zalando.com/articles?${color != null ? `color=${color}&` : "" }category=mens-${category}&page=1&pageSize=50`,
+        url: `https://api.zalando.com/articles?${color != null ? `color=${color}&` : "" }category=mens-${category}&page=1&pageSize=30`,
         crossDomain: true,
         type: 'GET',
         xhrFields: {

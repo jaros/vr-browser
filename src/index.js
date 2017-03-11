@@ -1273,7 +1273,7 @@ Array.prototype.flatMap = function (lambda) {
         }
     }
 
-    function setData(d, i, count, size) {
+    function setData(d, i, count, radius) {
         var vector, phi, theta;
 
         var random = new THREE.Object3D();
@@ -1282,16 +1282,21 @@ Array.prototype.flatMap = function (lambda) {
         random.position.z = Math.random() * 4000 - 2000;
         d['random'] = random;
 
-        var sphere = new THREE.Object3D();
+
+
+
+
+
+        var sphere2 = new THREE.Object3D();
         vector = new THREE.Vector3();
         phi = Math.acos(-1 + (2 * i) / (count - 1));
         theta = Math.sqrt((count - 1) * Math.PI) * phi;
-        sphere.position.x = size * Math.cos(theta) * Math.sin(phi);
-        sphere.position.y = size * Math.sin(theta) * Math.sin(phi);
-        sphere.position.z = size * Math.cos(phi);
-        vector.copy(sphere.position).multiplyScalar(0.5);
-        sphere.lookAt(vector);
-        d['sphere'] = sphere;
+        sphere2.position.x = radius * Math.cos(theta) * Math.sin(phi);
+        sphere2.position.y = radius * Math.sin(theta) * Math.sin(phi);
+        sphere2.position.z = radius * Math.cos(phi);
+        vector.copy(sphere2.position).multiplyScalar(0.5);
+        sphere2.lookAt(vector);
+        d['sphere'] = sphere2;
 
         var helix = new THREE.Object3D();
         vector = new THREE.Vector3();
@@ -1419,6 +1424,7 @@ zalando.queryCategory(tt, "blue", (data) => {
         window.addEventListener('resize', VIZ.onWindowResize, false);
     });
     // }
+    // recognition.start();
     // recognition.start();
 });
 
