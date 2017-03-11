@@ -2,6 +2,7 @@ import * as THREE from "three";
 import * as d3 from "d3";
 import * as TWEEN from "tween.js";
 import "./lib/TrackballControls";
+import * as $ from "jquery";
 
 THREE.TrackballControls = function (object, domElement) {
 
@@ -295,6 +296,8 @@ THREE.TrackballControls = function (object, domElement) {
 
         _eye.subVectors(_this.object.position, _this.target);
 
+        _eye.multiplyScalar(0.5);
+
         if (!_this.noRotate) {
 
             _this.rotateCamera();
@@ -338,6 +341,7 @@ THREE.TrackballControls = function (object, domElement) {
         _this.object.position.copy(_this.position0);
         _this.object.up.copy(_this.up0);
 
+        console.log(_this.object.position);
         _eye.subVectors(_this.object.position, _this.target);
 
         _this.object.lookAt(_this.target);
@@ -1013,7 +1017,7 @@ THREE.CSS3DRenderer = function () {
         sphere.position.x = 800 * Math.cos(theta) * Math.sin(phi);
         sphere.position.y = 800 * Math.sin(theta) * Math.sin(phi);
         sphere.position.z = 800 * Math.cos(phi);
-        vector.copy(sphere.position).multiplyScalar(2);
+        vector.copy(sphere.position).multiplyScalar(0.5);
         sphere.lookAt(vector);
         d['sphere'] = sphere;
 
@@ -1097,9 +1101,32 @@ THREE.CSS3DRenderer = function () {
     window.VIZ = VIZ;
 }())
 
+var recognition = new (webkitSpeechRecognition || mozSpeechRecognition || msSpeechRecognition)();
+recognition.lang = 'en-US';
+recognition.interimResults = false;
+recognition.maxAlternatives = 5;
+recognition.start();
+recognition.onresult = function (event) {
+    const tt = event.results[0][0].transcript;
+    console.log('You said: ', tt);
+    $.ajax({
+        url: `http://api.duckduckgo.com/?q=${tt}&format=json&pretty=1`,
+        crossDomain: true,
+        type: 'GET',
+        xhrFields: {
+            withCredentials: true
+        },
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        success: function (result) {
+            console.log(result);
+        }
+    })
+
+};
+
 d3.json("data/investments.json", function (error, data) {
     VIZ.drawElements(data);
-    VIZ.transform('helix');
+    VIZ.transform('sphere');
     d3.select("#loading").remove();
     VIZ.render();
     VIZ.animate();
