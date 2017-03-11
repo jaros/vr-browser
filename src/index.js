@@ -2,8 +2,11 @@ import * as THREE from "three";
 import * as d3 from "d3";
 import * as TWEEN from "tween.js";
 import * as zalando from "./zalando";
+import $ from "jquery";
 import * as $ from "jquery";
-import * as FlyC from "three-fly-controls"
+
+
+//import * as FlyC from "three-fly-controls"
 
 // THREE.FlyControls = function ( object, domElement, opts ) {
 
@@ -57,7 +60,7 @@ import * as FlyC from "three-fly-controls"
 
 //             }
 
-            
+
 
 //             switch ( event.keyCode ) {
 
@@ -82,7 +85,7 @@ import * as FlyC from "three-fly-controls"
 //                 case 69: /*E*/ this.moveState.rollRight = 1; break;
 
 //             }
-            
+
 //             var surpress = [38, 40, 37, 39];
 
 //             if(surpress.indexOf(event.keyCode) > -1) {
@@ -212,7 +215,7 @@ import * as FlyC from "three-fly-controls"
 //         };
 
 //         this.update = function( delta ) {
-            
+
 //             var time = Date.now();
 //             var delta = ( time - prevTime ) / 10;
 
@@ -306,7 +309,7 @@ import * as FlyC from "three-fly-controls"
 THREE.TrackballControls = function (object, domElement) {
 
     var _this = this;
-    var STATE = { NONE: - 1, ROTATE: 0, ZOOM: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_ZOOM_PAN: 4, MOVE: 5 };
+    var STATE = { NONE: - 1, ROTATE: 0, ZOOM: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_ZOOM_PAN: 4 };
 
     this.object = object;
     this.domElement = (domElement !== undefined) ? domElement : document;
@@ -592,7 +595,6 @@ THREE.TrackballControls = function (object, domElement) {
     };
 
     this.update = function () {
-
         _eye.subVectors(_this.object.position, _this.target);
 
         _eye.multiplyScalar(0.5);
@@ -679,41 +681,41 @@ THREE.TrackballControls = function (object, domElement) {
 
         } else if (event.keyCode === 87) {
             var prevPov = new THREE.Vector3();
-            var pan = new THREE.Vector3();            
+            var pan = new THREE.Vector3();
             prevPov.copy(_this.object.position)
             _this.object.translateZ( -30);
-            pan.subVectors(_this.object.position,prevPov)    
-            _this.target.add(pan);               
+            pan.subVectors(_this.object.position,prevPov)
+            _this.target.add(pan);
             _this.update();
         } else if (event.keyCode === 83) {
             var prevPov = new THREE.Vector3();
-            var pan = new THREE.Vector3();            
+            var pan = new THREE.Vector3();
             prevPov.copy(_this.object.position)
             _this.object.translateZ( 30);
             pan.subVectors(_this.object.position,prevPov)
             _this.target.add(pan);
-            _this.update(); 
+            _this.update();
         } else if (event.keyCode === 65) {
             var prevPov = new THREE.Vector3();
-            var pan = new THREE.Vector3();            
+            var pan = new THREE.Vector3();
             prevPov.copy(_this.object.position)
             _this.object.translateX( -30);
             pan.subVectors(_this.object.position,prevPov)
             _this.target.add(pan);
-            _this.update(); 
+            _this.update();
         } else if (event.keyCode === 68) {
             var prevPov = new THREE.Vector3();
-            var pan = new THREE.Vector3();            
+            var pan = new THREE.Vector3();
             prevPov.copy(_this.object.position)
             _this.object.translateX( 30);
             pan.subVectors(_this.object.position,prevPov)
             _this.target.add(pan);
-            _this.update(); 
+            _this.update();
     }
 
     //                 case 65: /*A*/ this.moveState.left = 1; break;
 //                 case 68: /*D*/ this.moveState.right = 1; break;
-    
+
 
         //                 case 82: /*R*/ this.moveState.up = 1; break;
 //                 case 70: /*F*/ this.moveState.down = 1; break;
@@ -1192,26 +1194,15 @@ THREE.CSS3DRenderer = function () {
     camera.position.z = 3000;
     camera.setLens(30);
 
-    VIZ.drawElements = function (data1, data2) {
+    VIZ.drawElements = function (data1, data2, onClick) {
 
         VIZ.count1 = data1.length;
         VIZ.count2 = data2.length;
 
-        var margin = { top: 17, right: 0, bottom: 16, left: 20 },
-            width = 225 - margin.left - margin.right,
-            height = 140 - margin.top - margin.bottom;
-
-        var x = d3.scale.ordinal()
-            .rangeRoundBands([0, width], 0, 0)
-            .domain(d3.range(2004, 2014).map(function (d) { return d + ""; }))
-
-        var y = d3.scale.linear().range([height, 0]).domain([0, 135]);
-
-
-
         var elements1 = d3.selectAll('.element')
             .data(data1).enter()
             .append('div')
+            .on('click', function (d) { onClick(d); })
             .attr('class', 'element');
 
         elements1.append('div')
@@ -1220,20 +1211,22 @@ THREE.CSS3DRenderer = function () {
 
         elements1.append('div')
             .attr('class', 'investData')
-            .html(function (d, i) { return d.text; }); // item description
+            .html(function (d, i) { return d.color; }); // item description
 
-        elements1.append('div')
-            .attr('class', 'investLabel')
-            .html("Goto next link"); // item url
+        var imageHolder = elements1.append('div').attr('class', 'investLabel');
+
+        imageHolder.append('img')
+            .attr('height', function (d) { return d.media ? '80px' : 0})
+            .attr('width', function (d) { return d.media ? '100px' : 0})
+            .attr("src", function (d) { return d.media ? d.media.images[0].mediumUrl : null;}); // item url
 
         elements1.each(setData1);
-        
-
 
 
         var elements2 = d3.selectAll('.element2')
             .data(data2).enter()
             .append('div')
+            .on('click', function (d) { onClick(d) })
             .attr('class', 'element2');
 
         elements2.append('div')
@@ -1245,21 +1238,23 @@ THREE.CSS3DRenderer = function () {
             .html(function (d, i) { return d.text; }); // item description
 
         elements2.append('div')
-            .attr('class', 'investLabel')
-            .html("Goto next link"); // item url
-
+            .attr('class', 'investLabel');
         elements2.each(setData2);
 
         elements1.each(objectify);
         elements2.each(objectify);
-
     };
-
 
     function objectify(d) {
         var object = new THREE.CSS3DObject(this);
         object.position = d.random.position;
         scene.add(object);
+    }
+
+    VIZ.removeAll = function () {
+        while (scene.children.length > 0) {
+            scene.remove(scene.children[0]);
+        }
     }
 
     function setData1(d, i) {
@@ -1344,14 +1339,8 @@ THREE.CSS3DRenderer = function () {
         renderer.render(scene, camera);
     };
 
-    d3.select("#menu").selectAll('button')
-        .data(['sphere', 'helix', 'grid']).enter()
-        .append('button')
-        .html(function (d) { return d; })
-        .on('click', function (d) { VIZ.transform(d); })
-
     VIZ.transform = function (layout) {
-        var duration = 1000;
+        var duration = 10000;
 
         TWEEN.removeAll();
 
@@ -1405,34 +1394,112 @@ var recognition = new (webkitSpeechRecognition || mozSpeechRecognition || msSpee
 recognition.lang = 'en-UK';
 recognition.interimResults = false;
 recognition.maxAlternatives = 5;
-recognition.start();
-recognition.onresult = function (event) {
-    let tt = event.results[0][0].transcript;
-    console.log('You said: ', tt);
-    if (tt.indexOf("clothing" !== -1)) {
-        tt = "clothing";
-    }
-    zalando.queryCategory(tt, undefined, (data) => {
-        console.log(data);
-        recognition.onresult = function (event) {
-            let color = event.results[0][0].transcript;
-            console.log('You said: ', color);
-            zalando.queryCategory(tt, color, (data) => {
-                console.log(data);
-            });
-        }
-        recognition.start();
-    });
+// recognition.start();
+// recognition.onresult = function (event) {
+// let tt = event.results[0][0].transcript;
+let tt = "shoes";
+console.log('You said: ', tt);
+if (tt.indexOf("clothing" !== -1)) {
+    tt = "clothing";
+}
+if (tt.indexOf("shows" !== -1)) {
+    tt = "shoes";
+}
+
+Array.prototype.flatMap = function(lambda) {
+    return Array.prototype.concat.apply([], this.map(lambda));
 };
 
-d3.json("data/investments1.json", function (error, data1) {
-    d3.json("data/investments2.json", function (error, data2) {
-        VIZ.drawElements(data1,data2);
+zalando.queryCategory(tt, "blue", (data) => {
+    VIZ.drawElements(data.content, data.content.flatMap(function (d) {
+            return [{
+                name: d.name
+            }, {
+                name: "Color",
+                text: d.color
+            }, {
+                name: "Season",
+                text: d.season
+            }];
+        }), function (a) {
+        // zalando.queryArticle(a.id, function (d) {
+        //     let tiles = [{
+        //         name: d.name
+        //     }, {
+        //         name: "Color",
+        //         text: d.color
+        //     }, {
+        //         name: "Season",
+        //         text: d.season
+        //     }];
+
+            VIZ.removeAll();
+            VIZ.render();
+            VIZ.animate();
+            VIZ.drawElements(data.content.flatMap(function (d) {
+            return [{
+                name: d.name
+            }, {
+                name: "Color",
+                text: d.color
+            }, {
+                name: "Season",
+                text: d.season
+            }];
+        }, []), function (d) { });
+            VIZ.transform('sphere');
+            VIZ.render();
+            VIZ.animate();
+        // });
+    });
+    VIZ.transform('sphere');
+    d3.select("#loading").remove();
+    VIZ.render();
+    VIZ.animate();
+    window.addEventListener('resize', VIZ.onWindowResize, false);
+    // recognition.onresult = function (event) {
+    // let color = event.results[0][0].transcript;
+    zalando.queryCategory(tt, "green", (dd) => {
+        VIZ.removeAll();
+        VIZ.render();
+        VIZ.animate();
+        VIZ.drawElements(dd.content, dd.content.flatMap(function (d) {
+            return [{
+                name: d.name
+            }, {
+                name: "Color",
+                text: d.color
+            }, {
+                name: "Season",
+                text: d.season
+            }];
+        }), function (a) {
+            // zalando.queryArticle(a.id, function (d) {
+                VIZ.removeAll();
+                VIZ.render();
+                VIZ.animate();
+                VIZ.drawElements(dd.content.flatMap(function (d) {
+            return [{
+                name: d.name
+            }, {
+                name: "Color",
+                text: d.color
+            }, {
+                name: "Season",
+                text: d.season
+            }];
+        }), [], function (d) { });
+                VIZ.transform('sphere');
+                VIZ.render();
+                VIZ.animate();
+            // });
+        });
         VIZ.transform('sphere');
-        d3.select("#loading").remove();
         VIZ.render();
         VIZ.animate();
         window.addEventListener('resize', VIZ.onWindowResize, false);
-    }
-    )}
-);
+    });
+    // }
+    // recognition.start();
+});
+// };
