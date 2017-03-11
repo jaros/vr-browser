@@ -10,7 +10,15 @@ export function queryCategory(category, color, onSucess) {
         },
         headers: { 'Access-Control-Allow-Origin': '*' },
         success: function (result) {
-            onSucess(result);
+            onSucess(result.content.map(function (d) {
+              return {
+                image: d.media.images[0].mediumUrl,
+                season: d.season,
+                name: d.name,
+                color: d.color,
+                type: "item"
+              }
+            }));
         }
     })
 }
@@ -28,4 +36,26 @@ export function queryArticle(id, onSucess) {
             onSucess(result);
         }
     })
+}
+
+export function transformArticle(d) {
+  return [{
+      type: "image",
+      url: d.image
+    }, {
+      type: "label",
+      text: d.name
+    }, {
+      type: "button"
+    }, {
+      type: "attributes",
+      attributes: [ {
+        name: "Color",
+        value: d.color
+      }, {
+        name: "Season",
+        value: d.season
+      }]
+    }
+  ]
 }

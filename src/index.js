@@ -4,6 +4,8 @@ import * as TWEEN from "tween.js";
 import * as zalando from "./zalando";
 import $ from "jquery";
 
+import * as utils from './utils';
+
 THREE.TrackballControls = function (object, domElement) {
 
     var _this = this;
@@ -842,6 +844,10 @@ THREE.CSS3DRenderer = function () {
 
 };
 
+Array.prototype.flatMap = function (lambda) {
+    return Array.prototype.concat.apply([], this.map(lambda));
+};
+
 (function () {
     var VIZ = {};
     var camera, renderer, controls, scene = new THREE.Scene();
@@ -852,31 +858,25 @@ THREE.CSS3DRenderer = function () {
     camera.setLens(30);
 
     VIZ.drawElements = function (data1, data2, onClick) {
-
         VIZ.count1 = data1.length;
         VIZ.count2 = data2.length;
 
-        var elements1 = d3.selectAll('.element')
+        let elements1 = d3.selectAll('.element')
             .data(data1).enter()
             .append('div')
             .on('click', function (d) { onClick(d); })
             .attr('class', 'element');
 
-        elements1.append('div')
-            .attr('class', 'chartTitle')
-            .html(function (d) { return d.name; }); // item Tittle
+        let items = elements1.filter(function (d) { return d.type === "item" });
+        utils.renderItem(items);
 
-        elements1.append('div')
-            .attr('class', 'investData')
-            .html(function (d, i) { return d.color; }); // item description
+        let labels = elements1.filter(function (d) { return d.type === "label" });
+        utils.renderLabel(labels);
 
-        elements1.append('img')
-            .attr('height', '75px')
-            .attr('width', '100px')
-            .attr('class', 'investLabel')
-            .attr("src", function (d, i) { return d.media ? d.media.images[0].mediumUrl : null;}); // item url
+        let images = elements1.filter(function (d) { return d.type === "image" });
+        utils.renderImage(images);
 
-        elements1.each(setData1);
+        elements1.each(function (d, i) { setData(d, i, VIZ.count1) });
 
 
         var elements2 = d3.selectAll('.element2')
@@ -885,17 +885,16 @@ THREE.CSS3DRenderer = function () {
             .on('click', function (d) { onClick(d) })
             .attr('class', 'element2');
 
-        elements2.append('div')
-            .attr('class', 'chartTitle')
-            .html(function (d) { return d.name; }); // item Tittle
+        items = elements2.filter(function (d) { return d.type === "item" });
+        utils.renderItem(items);
 
-        elements2.append('div')
-            .attr('class', 'investData')
-            .html(function (d, i) { return d.text; }); // item description
+        labels = elements2.filter(function (d) { return d.type === "label" });
+        utils.renderLabel(labels);
 
-        elements2.append('div')
-            .attr('class', 'investLabel');
-        elements2.each(setData2);
+        images = elements2.filter(function (d) { return d.type === "image" });
+        utils.renderImage(images);
+
+        elements2.each(function (d, i) { setData(d, i, VIZ.count2) });
 
         elements1.each(objectify);
         elements2.each(objectify);
@@ -913,7 +912,7 @@ THREE.CSS3DRenderer = function () {
         }
     }
 
-    function setData1(d, i) {
+    function setData(d, i, count) {
         var vector, phi, theta;
 
         var random = new THREE.Object3D();
@@ -924,8 +923,8 @@ THREE.CSS3DRenderer = function () {
 
         var sphere = new THREE.Object3D();
         vector = new THREE.Vector3();
-        phi = Math.acos(-1 + (2 * i) / (VIZ.count1 - 1));
-        theta = Math.sqrt((VIZ.count1 - 1) * Math.PI) * phi;
+        phi = Math.acos(-1 + (2 * i) / (count - 1));
+        theta = Math.sqrt((count - 1) * Math.PI) * phi;
         sphere.position.x = 800 * Math.cos(theta) * Math.sin(phi);
         sphere.position.y = 800 * Math.sin(theta) * Math.sin(phi);
         sphere.position.z = 800 * Math.cos(phi);
@@ -944,51 +943,6 @@ THREE.CSS3DRenderer = function () {
         vector.z = helix.position.z * 2;
         helix.lookAt(vector);
         d['helix'] = helix;
-
-        var grid = new THREE.Object3D();
-        grid.position.x = ((i % 5) * 400) - 800;
-        grid.position.y = (- (Math.floor(i / 5) % 5) * 400) + 800;
-        grid.position.z = (Math.floor(i / 25)) * 1000 - 2000;
-        d['grid'] = grid;
-    }
-
-    function setData2(d, i) {
-        var vector, phi, theta;
-
-        var random = new THREE.Object3D();
-        random.position.x = Math.random() * 4000 - 2000;
-        random.position.y = Math.random() * 4000 - 2000;
-        random.position.z = Math.random() * 4000 - 2000;
-        d['random'] = random;
-
-        var sphere = new THREE.Object3D();
-        vector = new THREE.Vector3();
-        phi = Math.acos(-1 + (2 * i) / (VIZ.count2 - 1));
-        theta = Math.sqrt((VIZ.count2 - 1) * Math.PI) * phi;
-        sphere.position.x = 1200 * Math.cos(theta) * Math.sin(phi);
-        sphere.position.y = 1200 * Math.sin(theta) * Math.sin(phi);
-        sphere.position.z = 1200 * Math.cos(phi);
-        vector.copy(sphere.position).multiplyScalar(0.5);
-        sphere.lookAt(vector);
-        d['sphere'] = sphere;
-
-        var helix = new THREE.Object3D();
-        vector = new THREE.Vector3();
-        phi = (i + 12) * 0.250 + Math.PI;
-        helix.position.x = 1000 * Math.sin(phi);
-        helix.position.y = - (i * 8) + 500;
-        helix.position.z = 1000 * Math.cos(phi);
-        vector.x = helix.position.x * 2;
-        vector.y = helix.position.y;
-        vector.z = helix.position.z * 2;
-        helix.lookAt(vector);
-        d['helix'] = helix;
-
-        var grid = new THREE.Object3D();
-        grid.position.x = ((i % 5) * 400) - 800;
-        grid.position.y = (- (Math.floor(i / 5) % 5) * 400) + 800;
-        grid.position.z = (Math.floor(i / 25)) * 1000 - 2000;
-        d['grid'] = grid;
     }
 
     VIZ.render = function () {
@@ -996,7 +950,7 @@ THREE.CSS3DRenderer = function () {
     };
 
     VIZ.transform = function (layout) {
-        var duration = 10000;
+        var duration = 1000;
 
         TWEEN.removeAll();
 
@@ -1062,51 +1016,15 @@ if (tt.indexOf("shows" !== -1)) {
     tt = "shoes";
 }
 
-Array.prototype.flatMap = function(lambda) { 
-    return Array.prototype.concat.apply([], this.map(lambda)); 
-};
-
 zalando.queryCategory(tt, "blue", (data) => {
-    VIZ.drawElements(data.content, data.content.flatMap(function (d) {
-            return [{
-                name: d.name
-            }, {
-                name: "Color",
-                text: d.color
-            }, {
-                name: "Season",
-                text: d.season
-            }];
-        }), function (a) {
-        // zalando.queryArticle(a.id, function (d) {
-        //     let tiles = [{
-        //         name: d.name
-        //     }, {
-        //         name: "Color",
-        //         text: d.color
-        //     }, {
-        //         name: "Season",
-        //         text: d.season
-        //     }];
-
-            VIZ.removeAll();
-            VIZ.render();
-            VIZ.animate();
-            VIZ.drawElements(data.content.flatMap(function (d) {
-            return [{
-                name: d.name
-            }, {
-                name: "Color",
-                text: d.color
-            }, {
-                name: "Season",
-                text: d.season
-            }];
-        }, []), function (d) { });
-            VIZ.transform('sphere');
-            VIZ.render();
-            VIZ.animate();
-        // });
+    VIZ.drawElements(data, data.flatMap(zalando.transformArticle), function (a) {
+        VIZ.removeAll();
+        VIZ.render();
+        VIZ.animate();
+        VIZ.drawElements(data.content.flatMap(zalando.transformArticle), [], function (d) { });
+        VIZ.transform('sphere');
+        VIZ.render();
+        VIZ.animate();
     });
     VIZ.transform('sphere');
     d3.select("#loading").remove();
@@ -1119,35 +1037,15 @@ zalando.queryCategory(tt, "blue", (data) => {
         VIZ.removeAll();
         VIZ.render();
         VIZ.animate();
-        VIZ.drawElements(dd.content, dd.content.flatMap(function (d) {
-            return [{
-                name: d.name
-            }, {
-                name: "Color",
-                text: d.color
-            }, {
-                name: "Season",
-                text: d.season
-            }];
-        }), function (a) {
+        VIZ.drawElements(dd, dd.flatMap(zalando.transformArticle), function (a) {
             // zalando.queryArticle(a.id, function (d) {
-                VIZ.removeAll();
-                VIZ.render();
-                VIZ.animate();
-                VIZ.drawElements(dd.content.flatMap(function (d) {
-            return [{
-                name: d.name
-            }, {
-                name: "Color",
-                text: d.color
-            }, {
-                name: "Season",
-                text: d.season
-            }];
-        }), [], function (d) { });
-                VIZ.transform('sphere');
-                VIZ.render();
-                VIZ.animate();
+            VIZ.removeAll();
+            VIZ.render();
+            VIZ.animate();
+            VIZ.drawElements(dd.flatMap(zalando.transformArticle), [], function (d) { });
+            VIZ.transform('sphere');
+            VIZ.render();
+            VIZ.animate();
             // });
         });
         VIZ.transform('sphere');
@@ -1158,4 +1056,5 @@ zalando.queryCategory(tt, "blue", (data) => {
     // }
     // recognition.start();
 });
+
 // };
