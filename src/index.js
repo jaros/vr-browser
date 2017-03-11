@@ -871,7 +871,7 @@ THREE.CSS3DRenderer = function () {
             .html(function (d, i) { return d.color; }); // item description
 
         elements1.append('img')
-            .attr('height', '100px')
+            .attr('height', '75px')
             .attr('width', '100px')
             .attr('class', 'investLabel')
             .attr("src", function (d, i) { return d.media ? d.media.images[0].mediumUrl : null;}); // item url
