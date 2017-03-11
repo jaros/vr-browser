@@ -1205,6 +1205,14 @@ Array.prototype.flatMap = function (lambda) {
             .data(data1).enter()
             .append('div')
             .on('click', function (d) { onClick(d); })
+            .on('mouseover', function (d, i) { 
+                const currentTransform = d3.select(d3.selectAll('.element')[0][i]).attr("style");
+                d3.select(d3.selectAll('.element')[0][i]).attr("style", currentTransform.replace("position: absolute; transform:", "position: absolute; transform: scale(1.1) "));
+            })
+            .on('mouseout', function (d, i) { 
+                const currentTransform = d3.select(d3.selectAll('.element')[0][i]).attr("style");
+                d3.select(d3.selectAll('.element')[0][i]).attr("style", currentTransform.replace("position: absolute; transform: scale(1.1) ", "position: absolute; transform:"));
+            })
             .attr('class', 'element');
 
         let items = elements1.filter(function (d) { return d.type === "item" });
