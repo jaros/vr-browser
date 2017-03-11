@@ -870,11 +870,12 @@ THREE.CSS3DRenderer = function () {
             .attr('class', 'investData')
             .html(function (d, i) { return d.color; }); // item description
 
-        elements1.append('img')
-            .attr('height', '75px')
-            .attr('width', '100px')
-            .attr('class', 'investLabel')
-            .attr("src", function (d, i) { return d.media ? d.media.images[0].mediumUrl : null;}); // item url
+        var imageHolder = elements1.append('div').attr('class', 'investLabel');
+
+        imageHolder.append('img')
+            .attr('height', function (d) { return d.media ? '80px' : 0})
+            .attr('width', function (d) { return d.media ? '100px' : 0})
+            .attr("src", function (d) { return d.media ? d.media.images[0].mediumUrl : null;}); // item url
 
         elements1.each(setData1);
 
