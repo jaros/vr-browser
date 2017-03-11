@@ -976,10 +976,10 @@ THREE.CSS3DRenderer = function () {
         vector = new THREE.Vector3();
         phi = Math.acos(-1 + (2 * i) / (VIZ.count2 - 1));
         theta = Math.sqrt((VIZ.count2 - 1) * Math.PI) * phi;
-        sphere.position.x = 800 * Math.cos(theta) * Math.sin(phi);
-        sphere.position.y = 800 * Math.sin(theta) * Math.sin(phi);
-        sphere.position.z = 800 * Math.cos(phi);
-        vector.copy(sphere.position).multiplyScalar(2);
+        sphere.position.x = 1200 * Math.cos(theta) * Math.sin(phi);
+        sphere.position.y = 1200 * Math.sin(theta) * Math.sin(phi);
+        sphere.position.z = 1200 * Math.cos(phi);
+        vector.copy(sphere.position).multiplyScalar(0.5);
         sphere.lookAt(vector);
         d['sphere'] = sphere;
 
