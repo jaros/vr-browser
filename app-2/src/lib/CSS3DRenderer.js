@@ -3,6 +3,8 @@
  * @author mrdoob / http://mrdoob.com/
  */
 
+import * as THREE from "three";
+
 THREE.CSS3DObject = function ( element ) {
 
 	THREE.Object3D.call( this );
