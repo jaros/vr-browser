@@ -1,6 +1,6 @@
 import * as $ from "jquery";
 
-export function queryCategory(category, color, onSucess) {
+export function queryCategory(category, color, onSuccess) {
   $.ajax({
         url: `https://api.zalando.com/articles?${color != null ? `color=${color}&` : "" }category=mens-${category}&page=1&pageSize=50`,
         crossDomain: true,
@@ -10,7 +10,7 @@ export function queryCategory(category, color, onSucess) {
         },
         headers: { 'Access-Control-Allow-Origin': '*' },
         success: function (result) {
-            onSucess(result.content.map(function (d) {
+            onSuccess(result.content.map(function (d) {
               return {
                 image: d.media.images[0].mediumUrl,
                 season: d.season,
@@ -19,21 +19,6 @@ export function queryCategory(category, color, onSucess) {
                 type: "item"
               }
             }));
-        }
-    })
-}
-
-export function queryArticle(id, onSucess) {
-  $.ajax({
-        url: `https://api.zalando.com/articles/${id}`,
-        crossDomain: true,
-        type: 'GET',
-        xhrFields: {
-            withCredentials: true
-        },
-        headers: { 'Access-Control-Allow-Origin': '*' },
-        success: function (result) {
-            onSucess(result);
         }
     })
 }

@@ -1216,6 +1216,12 @@ Array.prototype.flatMap = function (lambda) {
         let images = elements1.filter(function (d) { return d.type === "image" });
         utils.renderImage(images);
 
+        let buttons = elements1.filter(function (d) { return d.type === "button" });
+        utils.renderButton(buttons);
+
+        let attributes = elements1.filter(function (d) { return d.type === "attributes" });
+        utils.renderAttributes(attributes);
+
         elements1.each(function (d, i) { setData(d, i, VIZ.count1, 800) });
 
 
@@ -1233,6 +1239,13 @@ Array.prototype.flatMap = function (lambda) {
 
         images = elements2.filter(function (d) { return d.type === "image" });
         utils.renderImage(images);
+
+        buttons = elements2.filter(function (d) { return d.type === "button" });
+        utils.renderButton(buttons);
+
+        attributes = elements2.filter(function (d) { return d.type === "attributes" });
+        utils.renderAttributes(attributes);
+
 
         elements2.each(function (d, i) { setData(d, i, VIZ.count2, 1200) });
 
@@ -1349,10 +1362,10 @@ recognition.maxAlternatives = 5;
 // let tt = event.results[0][0].transcript;
 let tt = "shoes";
 console.log('You said: ', tt);
-if (tt.indexOf("clothing" !== -1)) {
+if (tt.indexOf("clothing") !== -1) {
     tt = "clothing";
 }
-if (tt.indexOf("shows" !== -1)) {
+if (tt.indexOf("shows") !== -1) {
     tt = "shoes";
 }
 
