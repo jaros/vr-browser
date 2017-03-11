@@ -2,9 +2,6 @@ import * as THREE from "three";
 import * as d3 from "d3";
 import * as TWEEN from "tween.js";
 import * as zalando from "./zalando";
-import $ from "jquery";
-import * as $ from "jquery";
-
 
 //import * as FlyC from "three-fly-controls"
 
