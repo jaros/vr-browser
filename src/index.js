@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import * as d3 from "d3";
 import * as TWEEN from "tween.js";
-import "./lib/TrackballControls";
+import * as zalando from "./zalando";
 import * as $ from "jquery";
 
 THREE.TrackballControls = function (object, domElement) {
@@ -1102,26 +1102,27 @@ THREE.CSS3DRenderer = function () {
 }())
 
 var recognition = new (webkitSpeechRecognition || mozSpeechRecognition || msSpeechRecognition)();
-recognition.lang = 'en-US';
+recognition.lang = 'en-UK';
 recognition.interimResults = false;
 recognition.maxAlternatives = 5;
 recognition.start();
 recognition.onresult = function (event) {
-    const tt = event.results[0][0].transcript;
+    let tt = event.results[0][0].transcript;
     console.log('You said: ', tt);
-    $.ajax({
-        url: `http://api.duckduckgo.com/?q=${tt}&format=json&pretty=1`,
-        crossDomain: true,
-        type: 'GET',
-        xhrFields: {
-            withCredentials: true
-        },
-        headers: { 'Access-Control-Allow-Origin': '*' },
-        success: function (result) {
-            console.log(result);
+    if (tt.indexOf("clothing" !== -1)) {
+        tt = "clothing";
+    }
+    zalando.queryCategory(tt, undefined, (data) => {
+        console.log(data);
+        recognition.onresult = function (event) {
+            let color = event.results[0][0].transcript;
+            console.log('You said: ', color);
+            zalando.queryCategory(tt, color, (data) => {
+                console.log(data);
+            });
         }
-    })
-
+        recognition.start();
+    });
 };
 
 d3.json("data/investments.json", function (error, data) {
