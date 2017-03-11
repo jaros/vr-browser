@@ -862,9 +862,6 @@ THREE.CSS3DRenderer = function () {
             width = 225 - margin.left - margin.right,
             height = 140 - margin.top - margin.bottom;
 
-        var legendArr = d3.keys(data[0].recs[0])
-            .filter(function (key) { return key !== 'year'; });
-
         var x = d3.scale.ordinal()
             .rangeRoundBands([0, width], 0, 0)
             .domain(d3.range(2004, 2014).map(function (d) { return d + ""; }))
@@ -886,60 +883,22 @@ THREE.CSS3DRenderer = function () {
         var elements = d3.selectAll('.element')
             .data(data).enter()
             .append('div')
-            .attr('class', 'element')
+            .attr('class', 'element');
 
         elements.append('div')
             .attr('class', 'chartTitle')
-            .html(function (d) { return d.name; })
+            .html(function (d) { return d.name; }); // item Tittle
 
         elements.append('div')
             .attr('class', 'investData')
-            .html(function (d, i) { return d.awards; })
+            .html(function (d, i) { return d.text; }); // item description
 
         elements.append('div')
             .attr('class', 'investLabel')
-            .html("Investments (10 Yrs)")
+            .html("Goto next link"); // item url
 
-        elements.append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("class", "chartg")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        elements.select(".chartg")
-            .append("g").attr("class", "seriesg")
-            .selectAll("series")
-            .data(function (d) { return prepData(d.recs); })
-            .enter()
-            .append("path")
-            .attr("class", "series")
-            .attr("d", function (d) { return area(d.values); })
-            .style("fill", function (d) { return color(d.name); })
 
-        elements.select(".chartg")
-            .append("g")
-            .attr("class", "legend")
-            .attr("transform", "translate(15, -15)")
-            .selectAll(".legendItem")
-            .data(setLegend(legendArr))
-            .enter()
-            .append("g")
-            .attr("class", "legendItem")
-            .each(function (d) {
-                d3.select(this).append("rect")
-                    .attr("x", function (d) { return d.x })
-                    .attr("y", function (d) { return d.y })
-                    .attr("width", 4)
-                    .attr("height", 4)
-                    .style("fill", function (d) { return color(d.name); })
-
-                d3.select(this).append("text")
-                    .attr("class", "legendText")
-                    .attr("x", function (d) { return d.x + 5 })
-                    .attr("y", function (d) { return d.y + 4 })
-                    .text(function (d) { return d.name; });
-            });
 
         elements.select(".chartg").append("g")
             .attr("class", "x axis")
@@ -959,41 +918,8 @@ THREE.CSS3DRenderer = function () {
         elements.each(setData);
         elements.each(objectify);
 
-        function prepData(data) {
-            var stack = d3.layout.stack()
-                .offset("zero")
-                .values(function (d) { return d.values; })
-                .x(function (d) { return x(d.label) + x.rangeBand() / 2; })
-                .y(function (d) { return d.value; });
+    };
 
-            var labelVar = 'year';
-            var varNames = d3.keys(data[0])
-                .filter(function (key) { return key !== labelVar; });
-
-            var seriesArr = [], series = {};
-            varNames.forEach(function (name) {
-                series[name] = { name: name, values: [] };
-                seriesArr.push(series[name]);
-            });
-
-            data.forEach(function (d) {
-                varNames.map(function (name) {
-                    series[name].values.push({
-                        name: name,
-                        label: d[labelVar],
-                        value: +d[name]
-                    });
-                });
-            });
-            return stack(seriesArr);
-        }
-    }
-
-    function setLegend(arr) {
-        return arr.map(function (n, i) {
-            return { name: n, x: (i % 4) * 48, y: Math.floor(i / 4) * 8 };
-        });
-    }
 
     function objectify(d) {
         var object = new THREE.CSS3DObject(this);
