@@ -2,7 +2,306 @@ import * as THREE from "three";
 import * as d3 from "d3";
 import * as TWEEN from "tween.js";
 import * as zalando from "./zalando";
-import $ from "jquery";
+
+//import * as FlyC from "three-fly-controls"
+
+// THREE.FlyControls = function ( object, domElement, opts ) {
+
+//         var changeEvent = { type: 'change' };
+
+//         this.object = object;
+
+//         opts = opts || {};
+
+//         this.domElement = ( domElement !== undefined ) ? domElement : document;
+//         if ( domElement ) this.domElement.setAttribute( 'tabindex', -1 );
+
+//         // API
+
+//         this.movementSpeed = (opts.movementSpeed === undefined) ? 1.0 : opts.movementSpeed;
+//         this.rollSpeed = (opts.rollSpeed === undefined) ? 0.005 : opts.rollSpeed;
+
+//         this.dragToLook = true;
+//         this.autoForward = false;
+
+//         // disable default target object behavior
+
+//         // internals
+
+//         this.tmpQuaternion = new THREE.Quaternion();
+
+//         this.mouseStatus = 0;
+
+//         this.moveState = { up: 0, down: 0, left: 0, right: 0, forward: 0, back: 0, pitchUp: 0, pitchDown: 0, yawLeft: 0, yawRight: 0, rollLeft: 0, rollRight: 0 };
+//         this.moveVector = new THREE.Vector3( 0, 0, 0 );
+//         this.rotationVector = new THREE.Vector3( 0, 0, 0 );
+
+//         var prevTime = Date.now();
+
+
+//         this.handleEvent = function ( event ) {
+
+//             if ( typeof this[ event.type ] == 'function' ) {
+
+//                 this[ event.type ]( event );
+
+//             }
+
+//         };
+
+//         this.keydown = function( event ) {
+
+//             if ( event.altKey ) {
+
+//                 return;
+
+//             }
+
+
+
+//             switch ( event.keyCode ) {
+
+//                 case 16: /* shift */ this.movementSpeedMultiplier = .1; break;
+
+//                 case 87: /*W*/ this.moveState.forward = 1; break;
+//                 case 83: /*S*/ this.moveState.back = 1; break;
+
+//                 case 65: /*A*/ this.moveState.left = 1; break;
+//                 case 68: /*D*/ this.moveState.right = 1; break;
+
+//                 case 82: /*R*/ this.moveState.up = 1; break;
+//                 case 70: /*F*/ this.moveState.down = 1; break;
+
+//                 case 38: /*up*/ this.moveState.pitchUp = 1; break;
+//                 case 40: /*down*/ this.moveState.pitchDown = 1; break;
+
+//                 case 37: /*left*/ this.moveState.yawLeft = 1; break;
+//                 case 39: /*right*/ this.moveState.yawRight = 1; break;
+
+//                 case 81: /*Q*/ this.moveState.rollLeft = 1; break;
+//                 case 69: /*E*/ this.moveState.rollRight = 1; break;
+
+//             }
+
+//             var surpress = [38, 40, 37, 39];
+
+//             if(surpress.indexOf(event.keyCode) > -1) {
+//                 event.preventDefault();
+//             }
+
+//             this.updateMovementVector();
+//             this.updateRotationVector();
+//             this.update();
+//             this.dispatchEvent(changeEvent);
+//         };
+
+//         this.keyup = function( event ) {
+
+//             switch( event.keyCode ) {
+
+//                 case 16: /* shift */ this.movementSpeedMultiplier = 1; break;
+
+//                 case 87: /*W*/ this.moveState.forward = 0; break;
+//                 case 83: /*S*/ this.moveState.back = 0; break;
+
+//                 case 65: /*A*/ this.moveState.left = 0; break;
+//                 case 68: /*D*/ this.moveState.right = 0; break;
+
+//                 case 82: /*R*/ this.moveState.up = 0; break;
+//                 case 70: /*F*/ this.moveState.down = 0; break;
+
+//                 case 38: /*up*/ this.moveState.pitchUp = 0; break;
+//                 case 40: /*down*/ this.moveState.pitchDown = 0; break;
+
+//                 case 37: /*left*/ this.moveState.yawLeft = 0; break;
+//                 case 39: /*right*/ this.moveState.yawRight = 0; break;
+
+//                 case 81: /*Q*/ this.moveState.rollLeft = 0; break;
+//                 case 69: /*E*/ this.moveState.rollRight = 0; break;
+
+//             }
+
+//             this.updateMovementVector();
+//             this.updateRotationVector();
+
+//         };
+
+//         this.mousedown = function( event ) {
+
+//             if ( this.domElement !== document ) {
+
+//                 this.domElement.focus();
+
+//             }
+
+//             event.preventDefault();
+//             event.stopPropagation();
+
+//             if ( this.dragToLook ) {
+
+//                 this.mouseStatus ++;
+
+//             } else {
+
+//                 switch ( event.button ) {
+
+//                     case 0: this.moveState.forward = 1; break;
+//                     case 2: this.moveState.back = 1; break;
+
+//                 }
+
+//                 this.updateMovementVector();
+
+//             }
+
+//         };
+
+//         this.mousemove = function( event ) {
+
+//             if ( !this.dragToLook || this.mouseStatus > 0 ) {
+
+//                 var container = this.getContainerDimensions();
+//                 var halfWidth  = container.size[ 0 ] / 2;
+//                 var halfHeight = container.size[ 1 ] / 2;
+
+//                 this.moveState.yawLeft   = - ( ( event.pageX - container.offset[ 0 ] ) - halfWidth  ) / halfWidth;
+//                 this.moveState.pitchDown =   ( ( event.pageY - container.offset[ 1 ] ) - halfHeight ) / halfHeight;
+
+//                 this.updateRotationVector();
+
+//             }
+
+//         };
+
+
+//         this.mouseout = function( event ) {
+
+//             event.preventDefault();
+//             event.stopPropagation();
+//             this.moveState = { up: 0, down: 0, left: 0, right: 0, forward: 0, back: 0, pitchUp: 0, pitchDown: 0, yawLeft: 0, yawRight: 0, rollLeft: 0, rollRight: 0 };
+//             this.updateRotationVector();
+//             this.updateMovementVector();
+//         };
+
+//         this.mouseup = function( event ) {
+
+//             event.preventDefault();
+//             event.stopPropagation();
+
+//             if ( this.dragToLook ) {
+
+//                 this.mouseStatus --;
+
+//                 this.moveState.yawLeft = this.moveState.pitchDown = 0;
+
+//             } else {
+
+//                 switch ( event.button ) {
+
+//                     case 0: this.moveState.forward = 0; break;
+//                     case 2: this.moveState.back = 0; break;
+
+//                 }
+
+//                 this.updateMovementVector();
+
+//             }
+
+//             this.updateRotationVector();
+
+//         };
+
+//         this.update = function( delta ) {
+
+//             var time = Date.now();
+//             var delta = ( time - prevTime ) / 10;
+
+//             var moveMult = delta * this.movementSpeed;
+//             var rotMult = delta * this.rollSpeed;
+
+//             this.object.translateX( this.moveVector.x * moveMult );
+//             this.object.translateY( this.moveVector.y * moveMult );
+//             this.object.translateZ( this.moveVector.z * moveMult );
+
+//             this.tmpQuaternion.set( this.rotationVector.x * rotMult, this.rotationVector.y * rotMult, this.rotationVector.z * rotMult, 1 ).normalize();
+//             this.object.quaternion.multiply( this.tmpQuaternion );
+
+//             // expose the rotation vector for convenience
+//             this.object.rotation.setFromQuaternion( this.object.quaternion, this.object.rotation.order );
+
+//             prevTime = time;
+//         };
+
+//         this.updateMovementVector = function() {
+
+//             var forward = ( this.moveState.forward || ( this.autoForward && !this.moveState.back ) ) ? 1 : 0;
+
+//             this.moveVector.x = ( -this.moveState.left    + this.moveState.right );
+//             this.moveVector.y = ( -this.moveState.down    + this.moveState.up );
+//             this.moveVector.z = ( -forward + this.moveState.back );
+
+//             //console.log( 'move:', [ this.moveVector.x, this.moveVector.y, this.moveVector.z ] );
+
+//         };
+
+//         this.updateRotationVector = function() {
+
+//             this.rotationVector.x = ( -this.moveState.pitchDown + this.moveState.pitchUp );
+//             this.rotationVector.y = ( -this.moveState.yawRight  + this.moveState.yawLeft );
+//             this.rotationVector.z = ( -this.moveState.rollRight + this.moveState.rollLeft );
+
+//             //console.log( 'rotate:', [ this.rotationVector.x, this.rotationVector.y, this.rotationVector.z ] );
+
+//         };
+
+//         this.getContainerDimensions = function() {
+
+//             if ( this.domElement != document ) {
+
+//                 return {
+//                     size    : [ this.domElement.offsetWidth, this.domElement.offsetHeight ],
+//                     offset  : [ this.domElement.offsetLeft,  this.domElement.offsetTop ]
+//                 };
+
+//             } else {
+
+//                 return {
+//                     size    : [ window.innerWidth, window.innerHeight ],
+//                     offset  : [ 0, 0 ]
+//                 };
+
+//             }
+
+//         };
+
+
+
+//         function bind( scope, fn ) {
+
+//             return function () {
+
+//                 fn.apply( scope, arguments );
+
+//             };
+
+//         };
+
+//         this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
+
+//         this.domElement.addEventListener( 'mousemove', bind( this, this.mousemove ), false );
+//         this.domElement.addEventListener( 'mousedown', bind( this, this.mousedown ), false );
+//         this.domElement.addEventListener( 'mouseup',   bind( this, this.mouseup ), false );
+//         this.domElement.addEventListener( 'mouseout',   bind( this, this.mouseout ), false );
+
+//         this.domElement.addEventListener( 'keydown', bind( this, this.keydown ), false );
+//         this.domElement.addEventListener( 'keyup',   bind( this, this.keyup ), false );
+
+//         this.updateMovementVector();
+//         this.updateRotationVector();
+//     };
+
+// THREE.FlyControls.prototype = Object.create(THREE.EventDispatcher.prototype);
+// THREE.FlyControls.prototype.constructor = THREE.FlyControls;
 
 import * as utils from './utils';
 
@@ -34,7 +333,7 @@ THREE.TrackballControls = function (object, domElement) {
     this.minDistance = 0;
     this.maxDistance = Infinity;
 
-    this.keys = [65 /*A*/, 83 /*S*/, 68 /*D*/];
+    this.keys = [];//65 /*A*/, 83 /*S*/, 68 /*D*/];
 
     // internals
 
@@ -297,6 +596,8 @@ THREE.TrackballControls = function (object, domElement) {
     this.update = function () {
         _eye.subVectors(_this.object.position, _this.target);
 
+        _eye.multiplyScalar(0.5);
+
         if (!_this.noRotate) {
 
             _this.rotateCamera();
@@ -319,7 +620,7 @@ THREE.TrackballControls = function (object, domElement) {
 
         _this.checkDistances();
 
-        _this.object.lookAt(_this.target);
+       _this.object.lookAt(_this.target);
 
         if (lastPosition.distanceToSquared(_this.object.position) > EPS) {
 
@@ -377,7 +678,46 @@ THREE.TrackballControls = function (object, domElement) {
 
             _state = STATE.PAN;
 
-        }
+        } else if (event.keyCode === 87) {
+            var prevPov = new THREE.Vector3();
+            var pan = new THREE.Vector3();
+            prevPov.copy(_this.object.position)
+            _this.object.translateZ( -30);
+            pan.subVectors(_this.object.position,prevPov)
+            _this.target.add(pan);
+            _this.update();
+        } else if (event.keyCode === 83) {
+            var prevPov = new THREE.Vector3();
+            var pan = new THREE.Vector3();
+            prevPov.copy(_this.object.position)
+            _this.object.translateZ( 30);
+            pan.subVectors(_this.object.position,prevPov)
+            _this.target.add(pan);
+            _this.update();
+        } else if (event.keyCode === 65) {
+            var prevPov = new THREE.Vector3();
+            var pan = new THREE.Vector3();
+            prevPov.copy(_this.object.position)
+            _this.object.translateX( -30);
+            pan.subVectors(_this.object.position,prevPov)
+            _this.target.add(pan);
+            _this.update();
+        } else if (event.keyCode === 68) {
+            var prevPov = new THREE.Vector3();
+            var pan = new THREE.Vector3();
+            prevPov.copy(_this.object.position)
+            _this.object.translateX( 30);
+            pan.subVectors(_this.object.position,prevPov)
+            _this.target.add(pan);
+            _this.update();
+    }
+
+    //                 case 65: /*A*/ this.moveState.left = 1; break;
+//                 case 68: /*D*/ this.moveState.right = 1; break;
+
+
+        //                 case 82: /*R*/ this.moveState.up = 1; break;
+//                 case 70: /*F*/ this.moveState.down = 1; break;
 
     }
 
@@ -876,7 +1216,7 @@ Array.prototype.flatMap = function (lambda) {
         let images = elements1.filter(function (d) { return d.type === "image" });
         utils.renderImage(images);
 
-        elements1.each(function (d, i) { setData(d, i, VIZ.count1) });
+        elements1.each(function (d, i) { setData(d, i, VIZ.count1, 800) });
 
 
         var elements2 = d3.selectAll('.element2')
@@ -894,7 +1234,7 @@ Array.prototype.flatMap = function (lambda) {
         images = elements2.filter(function (d) { return d.type === "image" });
         utils.renderImage(images);
 
-        elements2.each(function (d, i) { setData(d, i, VIZ.count2) });
+        elements2.each(function (d, i) { setData(d, i, VIZ.count2, 1200) });
 
         elements1.each(objectify);
         elements2.each(objectify);
@@ -912,7 +1252,7 @@ Array.prototype.flatMap = function (lambda) {
         }
     }
 
-    function setData(d, i, count) {
+    function setData(d, i, count, size) {
         var vector, phi, theta;
 
         var random = new THREE.Object3D();
@@ -925,9 +1265,9 @@ Array.prototype.flatMap = function (lambda) {
         vector = new THREE.Vector3();
         phi = Math.acos(-1 + (2 * i) / (count - 1));
         theta = Math.sqrt((count - 1) * Math.PI) * phi;
-        sphere.position.x = 800 * Math.cos(theta) * Math.sin(phi);
-        sphere.position.y = 800 * Math.sin(theta) * Math.sin(phi);
-        sphere.position.z = 800 * Math.cos(phi);
+        sphere.position.x = size * Math.cos(theta) * Math.sin(phi);
+        sphere.position.y = size * Math.sin(theta) * Math.sin(phi);
+        sphere.position.z = size * Math.cos(phi);
         vector.copy(sphere.position).multiplyScalar(0.5);
         sphere.lookAt(vector);
         d['sphere'] = sphere;
@@ -1015,6 +1355,10 @@ if (tt.indexOf("clothing" !== -1)) {
 if (tt.indexOf("shows" !== -1)) {
     tt = "shoes";
 }
+
+Array.prototype.flatMap = function(lambda) {
+    return Array.prototype.concat.apply([], this.map(lambda));
+};
 
 zalando.queryCategory(tt, "blue", (data) => {
     VIZ.drawElements(data, data.flatMap(zalando.transformArticle), function (a) {
