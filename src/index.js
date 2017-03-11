@@ -868,11 +868,13 @@ THREE.CSS3DRenderer = function () {
 
         elements1.append('div')
             .attr('class', 'investData')
-            .html(function (d, i) { return d.text; }); // item description
+            .html(function (d, i) { return d.color; }); // item description
 
-        elements1.append('div')
+        elements1.append('img')
+            .attr('height', '100px')
+            .attr('width', '100px')
             .attr('class', 'investLabel')
-            .html("Goto next link"); // item url
+            .attr("src", function (d, i) { return d.media.images[0].mediumUrl; }); // item url
 
         elements1.each(setData1);
 
@@ -892,8 +894,7 @@ THREE.CSS3DRenderer = function () {
             .html(function (d, i) { return d.text; }); // item description
 
         elements2.append('div')
-            .attr('class', 'investLabel')
-            .html("Goto next link"); // item url
+            .attr('class', 'investLabel');
         elements2.each(setData2);
 
         elements1.each(objectify);
