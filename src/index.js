@@ -596,8 +596,6 @@ THREE.TrackballControls = function (object, domElement) {
     this.update = function () {
         _eye.subVectors(_this.object.position, _this.target);
 
-        _eye.multiplyScalar(0.5);
-
         if (!_this.noRotate) {
 
             _this.rotateCamera();
@@ -1230,7 +1228,7 @@ Array.prototype.flatMap = function (lambda) {
         let attributes = elements1.filter(function (d) { return d.type === "attributes" });
         utils.renderAttributes(attributes);
 
-        elements1.each(function (d, i) { setData(d, i, VIZ.count1, 800) });
+        elements1.each(function (d, i) { setData(d, i, VIZ.count1, 1200) });
 
 
         var elements2 = d3.selectAll('.element2')
@@ -1283,7 +1281,46 @@ Array.prototype.flatMap = function (lambda) {
         d['random'] = random;
 
 
+        var sphere = new THREE.Object3D();
 
+        if (i < 12) {
+            sphere.position.y = 0;
+            const alfa = Math.PI / 12 * i;
+            sphere.position.x = Math.cos(alfa) * radius;
+            sphere.position.z = -Math.sin(alfa) * radius;
+        }
+        if (i >= 12 && i < 18) {
+            const radiusPrim = radius * Math.sin(Math.PI / 3);
+            sphere.position.y = Math.cos(Math.PI / 3) * radius;
+
+            const alfa = Math.PI / 6 * (i - 12);
+            sphere.position.x = Math.cos(alfa) * radiusPrim;
+            sphere.position.z = -Math.sin(alfa) * radiusPrim;
+        }
+        if (i >= 18 && i < 24) {
+            const radiusPrim = radius * Math.sin(Math.PI / 3);
+            sphere.position.y = -Math.cos(Math.PI / 3) * radius;
+
+            const alfa = Math.PI / 6 * (i - 18);
+            sphere.position.x = Math.cos(alfa) * radiusPrim;
+            sphere.position.z = -Math.sin(alfa) * radiusPrim;
+        }
+        if (i >= 24 && i < 27) {
+            const radiusPrim = radius * Math.sin(Math.PI / 6);
+            sphere.position.y = Math.cos(Math.PI / 6) * radius;
+
+            const alfa = Math.PI / 3 * (i - 24);
+            sphere.position.x = Math.cos(alfa) * radiusPrim;
+            sphere.position.z = -Math.sin(alfa) * radiusPrim;
+        }
+        if (i >= 27 && i < 30) {
+            const radiusPrim = radius * Math.sin(Math.PI / 6);
+            sphere.position.y = -Math.cos(Math.PI / 6) * radius;
+
+            const alfa = Math.PI / 3 * (i - 27);
+            sphere.position.x = Math.cos(alfa) * radiusPrim;
+            sphere.position.z = -Math.sin(alfa) * radiusPrim;
+        }
 
 
 
@@ -1294,9 +1331,11 @@ Array.prototype.flatMap = function (lambda) {
         sphere2.position.x = radius * Math.cos(theta) * Math.sin(phi);
         sphere2.position.y = radius * Math.sin(theta) * Math.sin(phi);
         sphere2.position.z = radius * Math.cos(phi);
-        vector.copy(sphere2.position).multiplyScalar(0.5);
-        sphere2.lookAt(vector);
-        d['sphere'] = sphere2;
+
+        vector.copy(sphere.position).multiplyScalar(0.5);
+
+        sphere.lookAt(vector);
+        d['sphere'] = sphere;
 
         var helix = new THREE.Object3D();
         vector = new THREE.Vector3();
@@ -1407,7 +1446,7 @@ zalando.queryCategory(tt, "blue", (data) => {
         VIZ.removeAll();
         VIZ.render();
         VIZ.animate();
-        VIZ.drawElements(dd, dd.flatMap(zalando.transformArticle), function (a) {
+        VIZ.drawElements(dd, [], function (a) {
             // zalando.queryArticle(a.id, function (d) {
             VIZ.removeAll();
             VIZ.render();
