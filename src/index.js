@@ -868,18 +868,6 @@ THREE.CSS3DRenderer = function () {
 
         var y = d3.scale.linear().range([height, 0]).domain([0, 135]);
 
-        var xAxis = d3.svg.axis().scale(x).orient("bottom");
-        var yAxis = d3.svg.axis().scale(y).orient("left");
-
-        var area = d3.svg.area()
-            .interpolate("cardinal")
-            .x(function (d) { return x(d.label) + x.rangeBand() / 2; })
-            .y0(function (d) { return y(d.y0); })
-            .y1(function (d) { return y(d.y0 + d.y); });
-
-        var color = d3.scale.ordinal()
-            .range(['rgb(166,206,227)', 'rgb(31,120,180)', 'rgb(178,223,138)', 'rgb(51,160,44)', 'rgb(251,154,153)', 'rgb(227,26,28)', 'rgb(253,191,111)', 'rgb(255,127,0)']);
-
         var elements = d3.selectAll('.element')
             .data(data).enter()
             .append('div')
@@ -896,24 +884,6 @@ THREE.CSS3DRenderer = function () {
         elements.append('div')
             .attr('class', 'investLabel')
             .html("Goto next link"); // item url
-
-
-
-
-        elements.select(".chartg").append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(xAxis);
-
-        elements.select(".chartg").append("g")
-            .attr("class", "y axis")
-            .call(yAxis)
-            .append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", 6)
-            .attr("dy", ".71em")
-            .style("text-anchor", "end")
-            .text("Investments");
 
         elements.each(setData);
         elements.each(objectify);
@@ -968,7 +938,7 @@ THREE.CSS3DRenderer = function () {
 
     VIZ.render = function () {
         renderer.render(scene, camera);
-    }
+    };
 
     d3.select("#menu").selectAll('button')
         .data(['sphere', 'helix', 'grid']).enter()
@@ -999,13 +969,13 @@ THREE.CSS3DRenderer = function () {
             .to({}, duration)
             .onUpdate(VIZ.render)
             .start();
-    }
+    };
 
     VIZ.animate = function () {
         requestAnimationFrame(VIZ.animate);
         TWEEN.update();
         controls.update();
-    }
+    };
 
     renderer = new THREE.CSS3DRenderer();
     renderer.setSize(width, height);
@@ -1023,9 +993,9 @@ THREE.CSS3DRenderer = function () {
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
         VIZ.render();
-    }
+    };
     window.VIZ = VIZ;
-}())
+}());
 
 var recognition = new (webkitSpeechRecognition || mozSpeechRecognition || msSpeechRecognition)();
 recognition.lang = 'en-US';
