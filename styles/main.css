@@ -93,7 +93,7 @@ h5 {
   stroke-width: 2px;
 }
 
-.element {
+.element, .element2 {
   width: 230px;
   height: 160px;
   font-weight: bold;

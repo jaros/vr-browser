@@ -851,31 +851,51 @@ THREE.CSS3DRenderer = function () {
     camera.position.z = 3000;
     camera.setLens(30);
 
-    VIZ.drawElements = function (data) {
-        VIZ.count = data.length;
+    VIZ.drawElements = function (data1, data2) {
 
-        var margin = { top: 17, right: 0, bottom: 16, left: 20 },
-            width = 225 - margin.left - margin.right,
-            height = 140 - margin.top - margin.bottom;
+        VIZ.count1 = data1.length;
+        VIZ.count2 = data2.length;
 
-        var selection = d3.selectAll(".one").data(data);
-        var elements = selection.enter()
+        var elements1 = d3.selectAll('.element')
+            .data(data1).enter()
             .append('div')
-            .attr('class', "one");
+            .attr('class', 'element');
 
-        elements.append('div')
+        elements1.append('div')
             .attr('class', 'chartTitle')
             .html(function (d) { return d.name; }); // item Tittle
 
-        elements.append('div')
+        elements1.append('div')
             .attr('class', 'investData')
             .html(function (d, i) { return d.text; }); // item description
 
-        elements.append('div')
+        elements1.append('div')
             .attr('class', 'investLabel')
             .html("Goto next link"); // item url
-        selection.each(setData);
-        selection.each(objectify);
+
+        elements1.each(setData1);
+
+
+        var elements2 = d3.selectAll('.element2')
+            .data(data2).enter()
+            .append('div')
+            .attr('class', 'element2');
+
+        elements2.append('div')
+            .attr('class', 'chartTitle')
+            .html(function (d) { return d.name; }); // item Tittle
+
+        elements2.append('div')
+            .attr('class', 'investData')
+            .html(function (d, i) { return d.text; }); // item description
+
+        elements2.append('div')
+            .attr('class', 'investLabel')
+            .html("Goto next link"); // item url
+        elements2.each(setData2);
+
+        elements1.each(objectify);
+        elements2.each(objectify);
     };
 
     function objectify(d) {
@@ -890,7 +910,7 @@ THREE.CSS3DRenderer = function () {
         }
     }
 
-    function setData(d, i) {
+    function setData1(d, i) {
         var vector, phi, theta;
 
         var random = new THREE.Object3D();
@@ -901,11 +921,50 @@ THREE.CSS3DRenderer = function () {
 
         var sphere = new THREE.Object3D();
         vector = new THREE.Vector3();
-        phi = Math.acos(-1 + (2 * i) / (VIZ.count - 1));
-        theta = Math.sqrt((VIZ.count - 1) * Math.PI) * phi;
+        phi = Math.acos(-1 + (2 * i) / (VIZ.count1 - 1));
+        theta = Math.sqrt((VIZ.count1 - 1) * Math.PI) * phi;
         sphere.position.x = 800 * Math.cos(theta) * Math.sin(phi);
         sphere.position.y = 800 * Math.sin(theta) * Math.sin(phi);
         sphere.position.z = 800 * Math.cos(phi);
+        vector.copy(sphere.position).multiplyScalar(0.5);
+        sphere.lookAt(vector);
+        d['sphere'] = sphere;
+
+        var helix = new THREE.Object3D();
+        vector = new THREE.Vector3();
+        phi = (i + 12) * 0.250 + Math.PI;
+        helix.position.x = 1000 * Math.sin(phi);
+        helix.position.y = - (i * 8) + 500;
+        helix.position.z = 1000 * Math.cos(phi);
+        vector.x = helix.position.x * 2;
+        vector.y = helix.position.y;
+        vector.z = helix.position.z * 2;
+        helix.lookAt(vector);
+        d['helix'] = helix;
+
+        var grid = new THREE.Object3D();
+        grid.position.x = ((i % 5) * 400) - 800;
+        grid.position.y = (- (Math.floor(i / 5) % 5) * 400) + 800;
+        grid.position.z = (Math.floor(i / 25)) * 1000 - 2000;
+        d['grid'] = grid;
+    }
+
+    function setData2(d, i) {
+        var vector, phi, theta;
+
+        var random = new THREE.Object3D();
+        random.position.x = Math.random() * 4000 - 2000;
+        random.position.y = Math.random() * 4000 - 2000;
+        random.position.z = Math.random() * 4000 - 2000;
+        d['random'] = random;
+
+        var sphere = new THREE.Object3D();
+        vector = new THREE.Vector3();
+        phi = Math.acos(-1 + (2 * i) / (VIZ.count2 - 1));
+        theta = Math.sqrt((VIZ.count2 - 1) * Math.PI) * phi;
+        sphere.position.x = 1200 * Math.cos(theta) * Math.sin(phi);
+        sphere.position.y = 1200 * Math.sin(theta) * Math.sin(phi);
+        sphere.position.z = 1200 * Math.cos(phi);
         vector.copy(sphere.position).multiplyScalar(0.5);
         sphere.lookAt(vector);
         d['sphere'] = sphere;
@@ -1004,9 +1063,10 @@ recognition.onresult = function (event) {
     if (tt.indexOf("shows" !== -1)) {
         tt = "shoes";
     }
+
     zalando.queryCategory(tt, "blue", (data) => {
         console.log(data);
-        VIZ.drawElements(data.content);
+        VIZ.drawElements(data.content, []);
         VIZ.transform('sphere');
         d3.select("#loading").remove();
         VIZ.render();
@@ -1020,7 +1080,7 @@ recognition.onresult = function (event) {
                 VIZ.removeAll();
                 VIZ.render();
                 VIZ.animate();
-                VIZ.drawElements(dd.content);
+                VIZ.drawElements(data.content, dd.content);
                 VIZ.transform('sphere');
                 VIZ.render();
                 VIZ.animate();
