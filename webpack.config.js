@@ -19,4 +19,12 @@ module.exports = {
       loader: 'style!css'
     }]
   }
+  // ,
+  //   headers: {
+  //       "Access-Control-Allow-Origin": "https://api.zalando.com",
+  //       "Access-Control-Allow-Credentials": "true",
+  //       "Access-Control-Allow-Headers": "Content-Type, Authorization, x-id, Content-Length, X-Requested-With",
+  //       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"
+  //   }
 };
+

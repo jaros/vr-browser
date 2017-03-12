@@ -58,7 +58,6 @@ import * as zalando from "./zalando";
 //             }
 
 
-
 //             switch ( event.keyCode ) {
 
 //                 case 16: /* shift */ this.movementSpeedMultiplier = .1; break;
@@ -275,7 +274,6 @@ import * as zalando from "./zalando";
 //         };
 
 
-
 //         function bind( scope, fn ) {
 
 //             return function () {
@@ -308,7 +306,7 @@ import * as utils from './utils';
 THREE.TrackballControls = function (object, domElement) {
 
     var _this = this;
-    var STATE = { NONE: - 1, ROTATE: 0, ZOOM: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_ZOOM_PAN: 4 };
+    var STATE = {NONE: -1, ROTATE: 0, ZOOM: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_ZOOM_PAN: 4};
 
     this.object = object;
     this.domElement = (domElement !== undefined) ? domElement : document;
@@ -317,7 +315,7 @@ THREE.TrackballControls = function (object, domElement) {
 
     this.enabled = true;
 
-    this.screen = { left: 0, top: 0, width: 0, height: 0 };
+    this.screen = {left: 0, top: 0, width: 0, height: 0};
 
     this.rotateSpeed = 1.0;
     this.zoomSpeed = 1.2;
@@ -371,9 +369,9 @@ THREE.TrackballControls = function (object, domElement) {
 
     // events
 
-    var changeEvent = { type: 'change' };
-    var startEvent = { type: 'start' };
-    var endEvent = { type: 'end' };
+    var changeEvent = {type: 'change'};
+    var startEvent = {type: 'start'};
+    var endEvent = {type: 'end'};
 
 
     // methods
@@ -618,7 +616,7 @@ THREE.TrackballControls = function (object, domElement) {
 
         _this.checkDistances();
 
-       _this.object.lookAt(_this.target);
+        _this.object.lookAt(_this.target);
 
         if (lastPosition.distanceToSquared(_this.object.position) > EPS) {
 
@@ -680,37 +678,37 @@ THREE.TrackballControls = function (object, domElement) {
             var prevPov = new THREE.Vector3();
             var pan = new THREE.Vector3();
             prevPov.copy(_this.object.position)
-            _this.object.translateZ( -500);
-            pan.subVectors(_this.object.position,prevPov)
+            _this.object.translateZ(-500);
+            pan.subVectors(_this.object.position, prevPov)
             _this.target.add(pan);
             _this.update();
         } else if (event.keyCode === 83) {
             var prevPov = new THREE.Vector3();
             var pan = new THREE.Vector3();
             prevPov.copy(_this.object.position)
-            _this.object.translateZ( 500);
-            pan.subVectors(_this.object.position,prevPov)
+            _this.object.translateZ(500);
+            pan.subVectors(_this.object.position, prevPov)
             _this.target.add(pan);
             _this.update();
         } else if (event.keyCode === 65) {
             var prevPov = new THREE.Vector3();
             var pan = new THREE.Vector3();
             prevPov.copy(_this.object.position)
-            _this.object.translateX( -30);
-            pan.subVectors(_this.object.position,prevPov)
+            _this.object.translateX(-30);
+            pan.subVectors(_this.object.position, prevPov)
             _this.target.add(pan);
             _this.update();
         } else if (event.keyCode === 68) {
             var prevPov = new THREE.Vector3();
             var pan = new THREE.Vector3();
             prevPov.copy(_this.object.position)
-            _this.object.translateX( 30);
-            pan.subVectors(_this.object.position,prevPov)
+            _this.object.translateX(30);
+            pan.subVectors(_this.object.position, prevPov)
             _this.target.add(pan);
             _this.update();
-    }
+        }
 
-    //                 case 65: /*A*/ this.moveState.left = 1; break;
+        //                 case 65: /*A*/ this.moveState.left = 1; break;
 //                 case 68: /*D*/ this.moveState.right = 1; break;
 
 
@@ -1058,19 +1056,19 @@ THREE.CSS3DRenderer = function () {
 
         return 'matrix3d(' +
             epsilon(elements[0]) + ',' +
-            epsilon(- elements[1]) + ',' +
+            epsilon(-elements[1]) + ',' +
             epsilon(elements[2]) + ',' +
             epsilon(elements[3]) + ',' +
             epsilon(elements[4]) + ',' +
-            epsilon(- elements[5]) + ',' +
+            epsilon(-elements[5]) + ',' +
             epsilon(elements[6]) + ',' +
             epsilon(elements[7]) + ',' +
             epsilon(elements[8]) + ',' +
-            epsilon(- elements[9]) + ',' +
+            epsilon(-elements[9]) + ',' +
             epsilon(elements[10]) + ',' +
             epsilon(elements[11]) + ',' +
             epsilon(elements[12]) + ',' +
-            epsilon(- elements[13]) + ',' +
+            epsilon(-elements[13]) + ',' +
             epsilon(elements[14]) + ',' +
             epsilon(elements[15]) +
             ')';
@@ -1086,10 +1084,10 @@ THREE.CSS3DRenderer = function () {
             epsilon(elements[1]) + ',' +
             epsilon(elements[2]) + ',' +
             epsilon(elements[3]) + ',' +
-            epsilon(- elements[4]) + ',' +
-            epsilon(- elements[5]) + ',' +
-            epsilon(- elements[6]) + ',' +
-            epsilon(- elements[7]) + ',' +
+            epsilon(-elements[4]) + ',' +
+            epsilon(-elements[5]) + ',' +
+            epsilon(-elements[6]) + ',' +
+            epsilon(-elements[7]) + ',' +
             epsilon(elements[8]) + ',' +
             epsilon(elements[9]) + ',' +
             epsilon(elements[10]) + ',' +
@@ -1202,62 +1200,90 @@ Array.prototype.flatMap = function (lambda) {
         let elements1 = d3.selectAll('.element')
             .data(data1).enter()
             .append('div')
-            .on('click', function (d) { onClick(d); })
-            .on('mouseover', function (d, i) { 
+            .on('click', function (d) {
+                onClick(d);
+            })
+            .on('mouseover', function (d, i) {
                 const currentTransform = d3.select(d3.selectAll('.element')[0][i]).attr("style");
                 d3.select(d3.selectAll('.element')[0][i]).attr("style", currentTransform.replace("position: absolute; transform:", "position: absolute; transform: scale(1.1) "));
             })
-            .on('mouseout', function (d, i) { 
+            .on('mouseout', function (d, i) {
                 const currentTransform = d3.select(d3.selectAll('.element')[0][i]).attr("style");
                 d3.select(d3.selectAll('.element')[0][i]).attr("style", currentTransform.replace("position: absolute; transform: scale(1.1) ", "position: absolute; transform:"));
             })
             .attr('class', 'element');
 
-        let items = elements1.filter(function (d) { return d.type === "item" });
+        let items = elements1.filter(function (d) {
+            return d.type === "item"
+        });
         utils.renderItem(items);
 
-        let labels = elements1.filter(function (d) { return d.type === "label" });
+        let labels = elements1.filter(function (d) {
+            return d.type === "label"
+        });
         utils.renderLabel(labels);
 
-        let images = elements1.filter(function (d) { return d.type === "image" });
+        let images = elements1.filter(function (d) {
+            return d.type === "image"
+        });
         utils.renderImage(images);
 
-        let buttons = elements1.filter(function (d) { return d.type === "button" });
+        let buttons = elements1.filter(function (d) {
+            return d.type === "button"
+        });
         utils.renderButton(buttons);
 
-        let attributes = elements1.filter(function (d) { return d.type === "attributes" });
+        let attributes = elements1.filter(function (d) {
+            return d.type === "attributes"
+        });
         utils.renderAttributes(attributes);
 
-        elements1.each(function (d, i) { setData(d, i, VIZ.count1, 1200) });
+        elements1.each(function (d, i) {
+            setData(d, i, VIZ.count1, 1200)
+        });
 
 
         var elements2 = d3.selectAll('.element2')
             .data(data2).enter()
             .append('div')
-            .on('click', function (d) { onClick(d) })
+            .on('click', function (d) {
+                onClick(d)
+            })
             .attr('class', 'element2');
 
         if (data1.length === 0) { // remove dimming
             elements2.attr('class', 'element3');
         }
 
-        items = elements2.filter(function (d) { return d.type === "item" });
+        items = elements2.filter(function (d) {
+            return d.type === "item"
+        });
         utils.renderItem(items);
 
-        labels = elements2.filter(function (d) { return d.type === "label" });
+        labels = elements2.filter(function (d) {
+            return d.type === "label"
+        });
         utils.renderLabel(labels);
 
-        images = elements2.filter(function (d) { return d.type === "image" });
+        images = elements2.filter(function (d) {
+            return d.type === "image"
+        });
         utils.renderImage(images);
 
-        buttons = elements2.filter(function (d) { return d.type === "button" });
+        buttons = elements2.filter(function (d) {
+            return d.type === "button"
+        });
         utils.renderButton(buttons);
 
-        attributes = elements2.filter(function (d) { return d.type === "attributes" });
+        attributes = elements2.filter(function (d) {
+            return d.type === "attributes"
+        });
         utils.renderAttributes(attributes);
 
 
-        elements2.each(function (d, i) { setData(d, i, VIZ.count2, 2000, true) });
+        elements2.each(function (d, i) {
+            setData(d, i, VIZ.count2, 2000, true)
+        });
 
         elements1.each(objectify);
         elements2.each(objectify);
@@ -1295,11 +1321,9 @@ Array.prototype.flatMap = function (lambda) {
         if (newI < 12) {
             sphere.position.y = 0;
             let alfa = Math.PI / 12 * newI;
-            console.log("begin", alfa);
             if (isBehind) {
                 alfa += (((i % 4) < 2) ? 1 : -1) * Math.PI / 90;
             }
-            console.log("after", alfa);
             if (isBehind) {
                 sphere.position.y = Math.sin(((i % 2 === 0) ? 1 : -1) * Math.PI / 90) * radius;
             }
@@ -1357,7 +1381,6 @@ Array.prototype.flatMap = function (lambda) {
         // }
 
 
-
         var sphere2 = new THREE.Object3D();
         vector = new THREE.Vector3();
         phi = Math.acos(-1 + (2 * i) / (count - 1));
@@ -1375,7 +1398,7 @@ Array.prototype.flatMap = function (lambda) {
         vector = new THREE.Vector3();
         phi = (i + 12) * 0.250 + Math.PI;
         helix.position.x = 1000 * Math.sin(phi);
-        helix.position.y = - (i * 8) + 500;
+        helix.position.y = -(i * 8) + 500;
         helix.position.z = 1000 * Math.cos(phi);
         vector.x = helix.position.x * 2;
         vector.y = helix.position.y;
@@ -1396,13 +1419,13 @@ Array.prototype.flatMap = function (lambda) {
         scene.children.forEach(function (object) {
             var newPos = object.element.__data__[layout].position;
             var coords = new TWEEN.Tween(object.position)
-                .to({ x: newPos.x, y: newPos.y, z: newPos.z }, duration)
+                .to({x: newPos.x, y: newPos.y, z: newPos.z}, duration)
                 .easing(TWEEN.Easing.Sinusoidal.InOut)
                 .start();
 
             var newRot = object.element.__data__[layout].rotation;
             var rotate = new TWEEN.Tween(object.rotation)
-                .to({ x: newRot.x, y: newRot.y, z: newRot.z }, duration)
+                .to({x: newRot.x, y: newRot.y, z: newRot.z}, duration)
                 .easing(TWEEN.Easing.Sinusoidal.InOut)
                 .start();
         });
@@ -1443,65 +1466,68 @@ var recognition = new (webkitSpeechRecognition || mozSpeechRecognition || msSpee
 recognition.lang = 'en-UK';
 recognition.interimResults = false;
 recognition.maxAlternatives = 5;
-// recognition.start();
-// recognition.onresult = function (event) {
-// let tt = event.results[0][0].transcript;
-let tt = "shoes";
-console.log('You said: ', tt);
-if (tt.indexOf("clothing") !== -1) {
-    tt = "clothing";
-}
-if (tt.indexOf("shows") !== -1) {
-    tt = "shoes";
-}
+recognition.onresult = function (event) {
+    let tt = event.results[0][0].transcript;
+    console.log('You said: ', tt);
+    if (tt.indexOf("clothing") !== -1) {
+        tt = "clothing";
+    }
+    if (tt.indexOf("shows") !== -1) {
+        tt = "shoes";
+    }
 
-Array.prototype.flatMap = function(lambda) {
-    return Array.prototype.concat.apply([], this.map(lambda));
-};
+    Array.prototype.flatMap = function (lambda) {
+        return Array.prototype.concat.apply([], this.map(lambda));
+    };
 
-zalando.queryCategory(tt, "blue", (data) => {
-    VIZ.drawElements(data, data.flatMap(zalando.transformArticle), function (a) {
-        VIZ.removeAll();
-        VIZ.render();
-        VIZ.animate();
-        VIZ.drawElements(data.content.flatMap(zalando.transformArticle), [], function (d) { });
-        VIZ.transform('sphere');
-        VIZ.render();
-        VIZ.animate();
-    });
-    VIZ.transform('sphere');
-    d3.select("#loading").remove();
-    VIZ.render();
-    VIZ.animate();
-    window.addEventListener('resize', VIZ.onWindowResize, false);
-    // recognition.onresult = function (event) {
-    // let color = event.results[0][0].transcript;
-    zalando.queryCategory(tt, "green", (dd) => {
-        VIZ.removeAll();
-        VIZ.render();
-        VIZ.animate();
-        let secondSphere = dd.flatMap(zalando.transformArticle);
-        VIZ.drawElements(dd, secondSphere, function (element) {
-            // zalando.queryArticle(a.id, function (d) {
-
-            // VIZ.camera.multiplyScalar(0.5);
+    zalando.queryCategory(tt, "blue", (data) => {
+        VIZ.drawElements(data, data.flatMap(zalando.transformArticle), function (a) {
             VIZ.removeAll();
             VIZ.render();
             VIZ.animate();
-            VIZ.drawElements([], secondSphere, function (d) { });
+            VIZ.drawElements(data.content.flatMap(zalando.transformArticle), [], function (d) {
+            });
             VIZ.transform('sphere');
             VIZ.render();
             VIZ.animate();
-            // });
         });
         VIZ.transform('sphere');
+        d3.select("#loading").remove();
         VIZ.render();
         VIZ.animate();
         window.addEventListener('resize', VIZ.onWindowResize, false);
-    });
-    // }
-    // recognition.start();
-    // recognition.start();
-});
+        recognition.onresult = function (event) {
+            let color = event.results[0][0].transcript;
+            zalando.queryCategory(tt, "green", (dd) => {
+                VIZ.removeAll();
+                VIZ.render();
+                VIZ.animate();
+                let secondSphere = dd.flatMap(zalando.transformArticle);
+                VIZ.drawElements(dd, secondSphere, function (element) {
+                    // zalando.queryArticle(a.id, function (d) {
 
-// };
+                    // VIZ.camera.multiplyScalar(0.5);
+                    VIZ.removeAll();
+                    VIZ.render();
+                    VIZ.animate();
+                    VIZ.drawElements([], secondSphere, function (d) {
+                    });
+                    VIZ.transform('sphere');
+                    VIZ.render();
+                    VIZ.animate();
+                    // });
+                });
+                VIZ.transform('sphere');
+                VIZ.render();
+                VIZ.animate();
+                window.addEventListener('resize', VIZ.onWindowResize, false);
+            });
+        }
+        recognition.start();
+    });
+};
+
+
+setTimeout(function () {
+    recognition.start();
+}, 3000);
