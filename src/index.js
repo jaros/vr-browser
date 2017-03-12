@@ -3,6 +3,117 @@ import * as d3 from "d3";
 import * as TWEEN from "tween.js";
 import * as zalando from "./zalando";
 
+// var StereoEffect = require('three-stereo-effect')(THREE);
+
+THREE.StereoEffect = function ( renderer ) {
+
+	// API
+
+	this.separation = 3;
+
+	/*
+	 * Distance to the non-parallax or projection plane
+	 */
+	this.focalLength = 15;
+
+	// internals
+
+	var _width, _height;
+
+	var _position = new THREE.Vector3();
+	var _quaternion = new THREE.Quaternion();
+	var _scale = new THREE.Vector3();
+
+	var _cameraL = new THREE.PerspectiveCamera();
+	var _cameraR = new THREE.PerspectiveCamera();
+
+	var _fov;
+	var _outer, _inner, _top, _bottom;
+	var _ndfl, _halfFocalWidth, _halfFocalHeight;
+	var _innerFactor, _outerFactor;
+
+	// initialization
+
+	renderer.autoClear = false;
+
+	this.setSize = function ( width, height ) {
+
+		_width = width / 2;
+		_height = height;
+
+		renderer.setSize( width, height );
+
+	};
+
+	this.render = function ( scene, camera ) {
+
+		scene.updateMatrixWorld();
+
+		if ( camera.parent === undefined ) camera.updateMatrixWorld();
+	
+		camera.matrixWorld.decompose( _position, _quaternion, _scale );
+
+		// Stereo frustum calculation
+
+		// Effective fov of the camera
+		_fov = THREE.Math.radToDeg( 2 * Math.atan( Math.tan( THREE.Math.degToRad( camera.fov ) * 0.5 ) ) );
+
+		_ndfl = camera.near / this.focalLength;
+		_halfFocalHeight = Math.tan( THREE.Math.degToRad( _fov ) * 0.5 ) * this.focalLength;
+		_halfFocalWidth = _halfFocalHeight * 0.5 * camera.aspect;
+
+		_top = _halfFocalHeight * _ndfl;
+		_bottom = -_top;
+		_innerFactor = ( _halfFocalWidth + this.separation / 2.0 ) / ( _halfFocalWidth * 2.0 );
+		_outerFactor = 1.0 - _innerFactor;
+
+		_outer = _halfFocalWidth * 2.0 * _ndfl * _outerFactor;
+		_inner = _halfFocalWidth * 2.0 * _ndfl * _innerFactor;
+
+		// left
+
+		_cameraL.projectionMatrix.makeFrustum(
+			-_outer,
+			_inner,
+			_bottom,
+			_top,
+			camera.near,
+			camera.far
+		);
+
+		_cameraL.position.copy( _position );
+		_cameraL.quaternion.copy( _quaternion );
+		_cameraL.translateX( - this.separation / 2.0 );
+
+		// right
+
+		_cameraR.projectionMatrix.makeFrustum(
+			-_inner,
+			_outer,
+			_bottom,
+			_top,
+			camera.near,
+			camera.far
+		);
+
+		_cameraR.position.copy( _position );
+		_cameraR.quaternion.copy( _quaternion );
+		_cameraR.translateX( this.separation / 2.0 );
+
+		//
+
+		renderer.setViewport( 0, 0, _width * 2, _height );
+		renderer.clear();
+
+		renderer.setViewport( 0, 0, _width, _height );
+		renderer.render( scene, _cameraL );
+
+		renderer.setViewport( _width, 0, _width, _height );
+		renderer.render( scene, _cameraR );
+
+	};
+
+};
 //import * as FlyC from "three-fly-controls"
 
 // THREE.FlyControls = function ( object, domElement, opts ) {
@@ -1000,6 +1111,7 @@ THREE.CSS3DSprite.prototype = Object.create(THREE.CSS3DObject.prototype);
 
 THREE.CSS3DRenderer = function () {
 
+    THREE.Object3D.call( this );
     console.log('THREE.CSS3DRenderer', THREE.REVISION);
 
     var _width, _height;
@@ -1333,7 +1445,10 @@ THREE.CSS3DRenderer = function () {
     }
 
     VIZ.render = function () {
-        renderer.render(scene, camera);
+        if (VIZ.effect)
+            VIZ.effect.render(scene,camera);
+        else
+            renderer.render(scene, camera);
     };
 
     VIZ.transform = function (layout) {
@@ -1367,10 +1482,22 @@ THREE.CSS3DRenderer = function () {
         controls.update();
     };
 
-    renderer = new THREE.CSS3DRenderer();
-    renderer.setSize(width, height);
-    renderer.domElement.style.position = 'absolute';
-    document.getElementById('container').appendChild(renderer.domElement);
+     renderer = new THREE.CSS3DRenderer();
+     renderer.setSize(width, height);
+     renderer.domElement.style.position = 'absolute';
+     document.getElementById('container').appendChild(renderer.domElement);
+     
+
+//    renderer = new THREE.WebGLRenderer();
+    // element = renderer.domElement;
+    // container = document.getElementById('webglviewer');
+  //  renderer.setSize(width, height);
+  //  renderer.domElement.style.position = 'absolute';    
+ //   document.getElementById('container').appendChild(renderer.domElement);
+    // container.appendChild(element);
+    // var effect = new THREE.StereoEffect(renderer);
+    // VIZ.effect = effect;
+    // effect.setSize(width, height);
 
     controls = new THREE.TrackballControls(camera, renderer.domElement);
     controls.rotateSpeed = 0.5;
@@ -1378,12 +1505,12 @@ THREE.CSS3DRenderer = function () {
     controls.maxDistance = 6000;
     controls.addEventListener('change', VIZ.render);
 
-    VIZ.onWindowResize = function () {
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        VIZ.render();
-    };
+    // VIZ.onWindowResize = function () {
+    //     camera.aspect = width / height;
+    //     camera.updateProjectionMatrix();
+    //     renderer.setSize(window.innerWidth, window.innerHeight);
+    //     VIZ.render();
+    // };
     window.VIZ = VIZ;
 }());
 
@@ -1498,5 +1625,267 @@ zalando.queryCategory(tt, "blue", (data) => {
     });
     // }
     // recognition.start();
+
+THREE.CSS3DStereoRenderer = function () {
+
+	console.log( 'THREE.CSS3DRenderer', THREE.REVISION );
+
+	var _stereo = new THREE.StereoCamera();
+	_stereo.aspect = 0.5;
+
+	var _cameraL, _cameraR;
+
+	var _width, _height;
+	var _widthHalf, _heightHalf;
+
+	var matrix = new THREE.Matrix4();
+
+	this.separation = 6;
+	this.targetDistance = 500;
+
+	//
+
+	var domElement = document.createElement( 'div' );
+
+	this.domElement = domElement;
+
+	//
+
+	var domElementL = document.createElement( 'div' );
+	domElementL.style.display = 'inline-block';
+	domElementL.style.overflow = 'hidden';
+
+	domElementL.style.WebkitTransformStyle = 'preserve-3d';
+	domElementL.style.MozTransformStyle = 'preserve-3d';
+	domElementL.style.oTransformStyle = 'preserve-3d';
+	domElementL.style.transformStyle = 'preserve-3d';
+
+	domElement.appendChild( domElementL );
+
+	var cameraElementL = document.createElement( 'div' );
+
+	cameraElementL.style.WebkitTransformStyle = 'preserve-3d';
+	cameraElementL.style.MozTransformStyle = 'preserve-3d';
+	cameraElementL.style.oTransformStyle = 'preserve-3d';
+	cameraElementL.style.transformStyle = 'preserve-3d';
+
+	domElementL.appendChild( cameraElementL );
+
+	//
+
+	var domElementR = document.createElement( 'div' );
+	domElementR.style.display = 'inline-block';
+	domElementR.style.overflow = 'hidden';
+
+	domElementR.style.WebkitTransformStyle = 'preserve-3d';
+	domElementR.style.MozTransformStyle = 'preserve-3d';
+	domElementR.style.oTransformStyle = 'preserve-3d';
+	domElementR.style.transformStyle = 'preserve-3d';
+
+	domElement.appendChild( domElementR );
+
+	var cameraElementR = document.createElement( 'div' );
+
+	cameraElementR.style.WebkitTransformStyle = 'preserve-3d';
+	cameraElementR.style.MozTransformStyle = 'preserve-3d';
+	cameraElementR.style.oTransformStyle = 'preserve-3d';
+	cameraElementR.style.transformStyle = 'preserve-3d';
+
+	domElementR.appendChild( cameraElementR );
+
+	this.setClearColor = function () {
+
+	};
+
+	this.setSize = function ( width, height ) {
+
+		domElement.style.width = width + 'px';
+		domElement.style.height = height + 'px';
+
+		_width = width / 2;
+		_height = height;
+
+		_widthHalf = _width / 2;
+		_heightHalf = _height / 2;
+
+		domElementL.style.width = _width + 'px';
+		domElementL.style.height = _height + 'px';
+
+		cameraElementL.style.width = _width + 'px';
+		cameraElementL.style.height = _height + 'px';
+
+		domElementR.style.width = _width + 'px';
+		domElementR.style.height = _height + 'px';
+
+		cameraElementR.style.width = _width + 'px';
+		cameraElementR.style.height = _height + 'px';
+
+	};
+
+	var epsilon = function ( value ) {
+
+		return Math.abs( value ) < Number.EPSILON ? 0 : value;
+
+	};
+
+	var getCameraCSSMatrix = function ( matrix ) {
+
+		var elements = matrix.elements;
+
+		return 'matrix3d(' +
+			epsilon( elements[ 0 ] ) + ',' +
+			epsilon( - elements[ 1 ] ) + ',' +
+			epsilon( elements[ 2 ] ) + ',' +
+			epsilon( elements[ 3 ] ) + ',' +
+			epsilon( elements[ 4 ] ) + ',' +
+			epsilon( - elements[ 5 ] ) + ',' +
+			epsilon( elements[ 6 ] ) + ',' +
+			epsilon( elements[ 7 ] ) + ',' +
+			epsilon( elements[ 8 ] ) + ',' +
+			epsilon( - elements[ 9 ] ) + ',' +
+			epsilon( elements[ 10 ] ) + ',' +
+			epsilon( elements[ 11 ] ) + ',' +
+			epsilon( elements[ 12 ] ) + ',' +
+			epsilon( - elements[ 13 ] ) + ',' +
+			epsilon( elements[ 14 ] ) + ',' +
+			epsilon( elements[ 15 ] ) +
+		')';
+
+	};
+
+	var getObjectCSSMatrix = function ( matrix ) {
+
+		var elements = matrix.elements;
+
+		return 'translate3d(-50%,-50%,0) matrix3d(' +
+			epsilon( elements[ 0 ] ) + ',' +
+			epsilon( elements[ 1 ] ) + ',' +
+			epsilon( elements[ 2 ] ) + ',' +
+			epsilon( elements[ 3 ] ) + ',' +
+			epsilon( - elements[ 4 ] ) + ',' +
+			epsilon( - elements[ 5 ] ) + ',' +
+			epsilon( - elements[ 6 ] ) + ',' +
+			epsilon( - elements[ 7 ] ) + ',' +
+			epsilon( elements[ 8 ] ) + ',' +
+			epsilon( elements[ 9 ] ) + ',' +
+			epsilon( elements[ 10 ] ) + ',' +
+			epsilon( elements[ 11 ] ) + ',' +
+			epsilon( elements[ 12 ] ) + ',' +
+			epsilon( elements[ 13 ] ) + ',' +
+			epsilon( elements[ 14 ] ) + ',' +
+			epsilon( elements[ 15 ] ) +
+		')';
+
+	};
+
+	var renderObject = function ( object, camera, cameraElement, side ) {
+
+		if ( object instanceof THREE.CSS3DObject ) {
+
+			var style;
+
+			if ( object instanceof THREE.CSS3DSprite ) {
+
+				// http://swiftcoder.wordpress.com/2008/11/25/constructing-a-billboard-matrix/
+
+				matrix.copy( camera.matrixWorldInverse );
+				matrix.transpose();
+				matrix.copyPosition( object.matrixWorld );
+				matrix.scale( object.scale );
+
+				matrix.elements[ 3 ] = 0;
+				matrix.elements[ 7 ] = 0;
+				matrix.elements[ 11 ] = 0;
+				matrix.elements[ 15 ] = 1;
+
+				style = getObjectCSSMatrix( matrix );
+
+			} else {
+
+				style = getObjectCSSMatrix( object.matrixWorld );
+
+			}
+
+			var element = object[ 'element' + side ];
+
+			element.style.WebkitTransform = style;
+			element.style.MozTransform = style;
+			element.style.oTransform = style;
+			element.style.transform = style;
+
+			if ( element.parentNode !== cameraElement ) {
+
+				cameraElement.appendChild( element );
+
+			}
+
+		}
+
+		for ( var i = 0, l = object.children.length; i < l; i ++ ) {
+
+			renderObject( object.children[ i ], camera, cameraElement, side );
+
+		}
+
+	};
+
+	this.render = function ( scene, camera ) {
+
+		scene.updateMatrixWorld();
+
+		if ( camera.parent === null ) camera.updateMatrixWorld();
+
+		_stereo.update( camera );
+
+		var fov = 0.5 / Math.tan( THREE.Math.degToRad( camera.fov * 0.5 ) ) * _height;
+
+		// Left
+
+		_cameraL = _stereo.cameraL;
+
+		domElementL.style.WebkitPerspective = fov + "px";
+		domElementL.style.MozPerspective = fov + "px";
+		domElementL.style.oPerspective = fov + "px";
+		domElementL.style.perspective = fov + "px";
+
+		_cameraL.matrixWorldInverse.getInverse( _cameraL.matrixWorld );
+
+		var style = "translate3d(0,0," + fov + "px)" + getCameraCSSMatrix( _cameraL.matrixWorldInverse ) +
+			" translate3d(" + _widthHalf + "px," + _heightHalf + "px, 0)";
+
+		cameraElementL.style.WebkitTransform = style;
+		cameraElementL.style.MozTransform = style;
+		cameraElementL.style.oTransform = style;
+		cameraElementL.style.transform = style;
+
+		renderObject( scene, _cameraL, cameraElementL, 'L' );
+
+		// Right
+
+		_cameraR = _stereo.cameraR;
+
+		domElementR.style.WebkitPerspective = fov + "px";
+		domElementR.style.MozPerspective = fov + "px";
+		domElementR.style.oPerspective = fov + "px";
+		domElementR.style.perspective = fov + "px";
+
+		_cameraR.matrixWorldInverse.getInverse( _cameraR.matrixWorld );
+
+		var style = "translate3d(0,0," + fov + "px)" + getCameraCSSMatrix( _cameraR.matrixWorldInverse ) +
+			" translate3d(" + _widthHalf + "px," + _heightHalf + "px, 0)";
+
+		cameraElementR.style.WebkitTransform = style;
+		cameraElementR.style.MozTransform = style;
+		cameraElementR.style.oTransform = style;
+		cameraElementR.style.transform = style;
+
+		renderObject( scene, _cameraR, cameraElementR, 'R' );
+
+	};
+
+};
+
+
 });
 // };
+

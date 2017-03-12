@@ -25,9 +25,11 @@
   },
   "dependencies": {
     "d3": "^3.5.17",
+    "device-orientation-controls": "^1.1.0",
     "jquery": "3.1.1",
     "three": "^0.66.0",
     "three-fly-controls": "^1.1.0",
+    "three-stereo-effect": "^1.0.14",
     "tween.js": "^16.6.0"
   }
 }
