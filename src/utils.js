@@ -28,8 +28,8 @@ export function renderImage(images) {
         });
 }
 
-export function renderButton(images) {
-    images.append('input')
+export function renderButton(buttons) {
+    buttons.append('input')
         .attr('type', 'button')
         .attr('class', 'item-button')
         .attr('value', 'Buy');

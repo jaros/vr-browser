@@ -1237,7 +1237,7 @@ Array.prototype.flatMap = function (lambda) {
             .on('click', function (d) { onClick(d) })
             .attr('class', 'element2');
 
-        if (data1.length === 0) {
+        if (data1.length === 0) { // remove dimming
             elements2.attr('class', 'element3');
         }
 
@@ -1280,7 +1280,7 @@ Array.prototype.flatMap = function (lambda) {
 
         let newI = i;
         if (isBehind) {
-            newI = i / 4;
+            newI = Math.floor(i / 4);
         }
 
         var random = new THREE.Object3D();
@@ -1295,11 +1295,13 @@ Array.prototype.flatMap = function (lambda) {
         if (newI < 12) {
             sphere.position.y = 0;
             let alfa = Math.PI / 12 * newI;
+            console.log("begin", alfa);
             if (isBehind) {
-                alfa += ((i % 2 === 1) ? 1 : -1) * Math.PI / 90;
+                alfa += (((i % 4) < 2) ? 1 : -1) * Math.PI / 90;
             }
+            console.log("after", alfa);
             if (isBehind) {
-                sphere.position.y = Math.sin(((i % 2 === 1) ? 1 : -1) * Math.PI / 90) * radius;
+                sphere.position.y = Math.sin(((i % 2 === 0) ? 1 : -1) * Math.PI / 90) * radius;
             }
 
             sphere.position.x = Math.cos(alfa) * radius;
@@ -1307,36 +1309,45 @@ Array.prototype.flatMap = function (lambda) {
         }
         if (newI >= 12 && newI < 18) {
             const radiusPrim = radius * Math.sin(Math.PI / 3);
-            sphere.position.y = Math.cos(Math.PI / 3 + ((i % 2 === 1) ? 1 : -1) * Math.PI / 90) * radius;
+            sphere.position.y = Math.cos(Math.PI / 3 + ((i % 2 === 1) ? 1 : -1) * Math.PI / 180) * radius;
 
             let alfa = Math.PI / 6 * (newI - 12);
             if (isBehind) {
-                alfa += ((i % 2 === 1) ? 1 : -1) * Math.PI / 90;
+                alfa += ((i % 2 === 1) ? 1 : -1) * Math.PI / 180;
             }
             sphere.position.x = Math.cos(alfa) * radiusPrim;
             sphere.position.z = -Math.sin(alfa) * radiusPrim;
         }
         if (newI >= 18 && newI < 24) {
             const radiusPrim = radius * Math.sin(Math.PI / 3);
-            sphere.position.y = -Math.cos(Math.PI / 3) * radius;
+            sphere.position.y = -Math.cos(Math.PI / 3 + ((i % 2 === 1) ? 1 : -1) * Math.PI / 180) * radius;
 
-            const alfa = Math.PI / 6 * (newI - 18);
+            let alfa = Math.PI / 6 * (newI - 18);
+            if (isBehind) {
+                alfa += ((i % 2 === 1) ? 1 : -1) * Math.PI / 180;
+            }
             sphere.position.x = Math.cos(alfa) * radiusPrim;
             sphere.position.z = -Math.sin(alfa) * radiusPrim;
         }
         if (newI >= 24 && newI < 27) {
             const radiusPrim = radius * Math.sin(Math.PI / 6);
-            sphere.position.y = Math.cos(Math.PI / 6) * radius;
+            sphere.position.y = Math.cos(Math.PI / 6 + ((i % 2 === 1) ? 1 : -1) * Math.PI / 180) * radius;
 
-            const alfa = Math.PI / 3 * (newI - 24);
+            let alfa = Math.PI / 3 * (newI - 24);
+            if (isBehind) {
+                alfa += ((i % 2 === 1) ? 1 : -1) * Math.PI / 180;
+            }
             sphere.position.x = Math.cos(alfa) * radiusPrim;
             sphere.position.z = -Math.sin(alfa) * radiusPrim;
         }
         if (newI >= 27 && newI < 30) {
             const radiusPrim = radius * Math.sin(Math.PI / 6);
-            sphere.position.y = -Math.cos(Math.PI / 6) * radius;
+            sphere.position.y = -Math.cos(Math.PI / 6 + ((i % 2 === 1) ? 1 : -1) * Math.PI / 180) * radius;
 
-            const alfa = Math.PI / 3 * (newI - 27);
+            let alfa = Math.PI / 3 * (newI - 27);
+            if (isBehind) {
+                alfa += ((i % 2 === 1) ? 1 : -1) * Math.PI / 180;
+            }
             sphere.position.x = Math.cos(alfa) * radiusPrim;
             sphere.position.z = -Math.sin(alfa) * radiusPrim;
         }

@@ -136,8 +136,8 @@ h5 {
 }
 
 .element2 {
-  width: 160px;
-  height: 160px;
+  width: 150px;
+  height: 150px;
   font-weight: bold;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -155,6 +155,23 @@ h5 {
 .element2.element3 {
   opacity: 1;
 }
+
+.element3 {
+  color: white;
+}
+
+.element3 .item-image {
+  width: 150px;
+  height: 150px;
+  border-style: dashed;
+}
+
+.element3 .item-body {
+  width: 150px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+
 
 .element2:hover {
   box-shadow: 0px 0px 12px rgba(0, 255, 255, 0.75);
@@ -181,15 +198,16 @@ h5 {
 }
 
 .item-button {
-  color: #000000;
+  background-color: #137CBD;
   /*background: transparent;*/
-  outline: 1px solid rgba(48, 103, 145, .75);
+  /*outline: 1px solid rgba(48, 103, 145, .75);*/
   border: 0px;
-  height: 115px;
-  width: 225px;
+  width: 100px;
+  height: 70px;
   font-size: 30px;
   padding: 5px 10px;
   cursor: pointer;
+  color: white;
 }
 
 .item-button:hover {
